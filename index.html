@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradeRent - Аренда торговых площадей в Беларуси</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .app-container {
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 50px rgba(0,0,0,0.1);
+        }
+        header {
+            background: white;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            padding: 1rem 0;
+        }
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4f46e5;
+            text-decoration: none;
+        }
+        .logo i {
+            font-size: 2rem;
+        }
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        nav a {
+            color: #6b7280;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        nav a:hover, nav a.active {
+            color: #4f46e5;
+            background: #f8fafc;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .user-avatar:hover {
+            transform: scale(1.05);
+        }
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-2px);
+        }
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #dc2626;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #4b5563;
+            transform: translateY(-2px);
+        }
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+        .btn-warning:hover {
+            background: #d97706;
+            transform: translateY(-2px);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border-radius: 20px;
+            margin-bottom: 3rem;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        .property-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #f1f5f9;
+            cursor: pointer;
+        }
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .property-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        .property-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        .property-description {
+            color: #6b7280;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+        .property-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #6b7280;
+        }
+        .detail-item i {
+            color: #4f46e5;
+        }
+        .price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 1rem;
+        }
+        .owner-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding-top: 1rem;
+            border-top: 1px solid #f1f5f9;
+        }
+        .owner-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #4f46e5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .owner-details {
+            flex: 1;
+        }
+        .owner-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        .owner-rating {
+            color: #f59e0b;
+            font-size: 0.9rem;
+        }
+        .contact-btn {
+            width: 100%;
+            margin-top: 1rem;
+            padding: 0.75rem;
+        }
+        .filters {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #374151;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+        .cities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .city-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .city-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-color: #4f46e5;
+        }
+        .city-icon {
+            font-size: 3rem;
+            color: #4f46e5;
+            margin-bottom: 1rem;
+        }
+        .city-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        .city-properties {
+            color: #6b7280;
+        }
+        .has-properties {
+            color: #10b981;
+        }
+        .no-properties {
+            color: #ef4444;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: white;
+            margin: 2% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+        }
+        .close {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        .close:hover {
+            color: #374151;
+        }
+        .review-card {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border-left: 4px solid #4f46e5;
+        }
+        .review-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .stars {
+            color: #f59e0b;
+        }
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .profile-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+            margin: 0 auto 1.5rem;
+        }
+        .login-form, .register-form {
+            max-width: 400px;
+            margin: 2rem auto;
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .form-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 2rem;
+        }
+        .test-accounts {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+        .test-accounts h4 {
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+        .stat-info h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        .stat-info p {
+            color: #6b7280;
+            margin: 0;
+        }
+        .admin-actions {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin: 2rem 0;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .moderation-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        .property-status {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .status-pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        .status-approved {
+            background: #d1fae5;
+            color: #059669;
+        }
+        .status-rejected {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        .admin-actions-modal {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 2px solid #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <div class="header-content">
+                <a class="logo" onclick="showSection('hero')">
+                    <i class="fas fa-store"></i>
+                    TradeRent
+                </a>
+                
+                <!-- Навигация для гостей -->
+                <nav id="guest-nav">
+                    <a onclick="showSection('properties')" class="active">Все площадки</a>
+                    <a onclick="showSection('cities')">Города</a>
+                    <div class="auth-buttons">
+                        <a class="btn btn-primary" onclick="showSection('login')">Войти</a>
+                        <a class="btn btn-success" onclick="showSection('register')">Регистрация</a>
+                    </div>
+                </nav>
+
+                <!-- Навигация для пользователей -->
+                <nav id="main-nav" style="display: none;">
+                    <a onclick="showSection('properties')" class="active">Все площадки</a>
+                    <span id="landlord-nav" style="display: none;">
+                        <a onclick="showSection('my-properties')">Мои площадки</a>
+                        <a onclick="showSection('add-property')">Добавить площадку</a>
+                    </span>
+                    <span id="admin-nav" style="display: none;">
+                        <a onclick="showSection('admin-panel')">Админ-панель</a>
+                        <a onclick="showSection('admin-moderation')">Модерация</a>
+                    </span>
+                    <a onclick="showSection('cities')">Города</a>
+                    <div class="user-info">
+                        <div id="nav-avatar" class="user-avatar" onclick="showSection('profile')"></div>
+                        <a class="btn btn-danger" onclick="logout()">Выйти</a>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <div class="container">
+            <!-- Герой секция -->
+            <div id="hero-section" class="section active">
+                <div class="hero">
+                    <h1>Найдите идеальную торговую площадь</h1>
+                    <p>Более 1000 площадок по всей Беларуси для вашего бизнеса</p>
+                    <a class="btn btn-primary" onclick="showSection('properties')">
+                        Начать поиск
+                    </a>
+                </div>
+            </div>
+
+            <!-- Секция входа -->
+            <div id="login-section" class="section">
+                <div class="login-form">
+                    <h2 class="form-title">Вход в систему</h2>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <input type="text" id="username" placeholder="Логин" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="password" placeholder="Пароль" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Войти</button>
+                    </form>
+                    <p style="text-align: center; margin-top: 1rem;">
+                        Нет аккаунта? <a onclick="showSection('register')" style="color: #4f46e5; cursor: pointer;">Зарегистрируйтесь</a>
+                    </p>
+                    <div class="test-accounts">
+                        <h4>Тестовые доступы:</h4>
+                        <p><strong>Админ:</strong> admin / admin123</p>
+                        <p><strong>Арендодатель:</strong> landlord / landlord123</p>
+                        <p><strong>Пользователь:</strong> user / user123</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Секция регистрации -->
+            <div id="register-section" class="section">
+                <div class="register-form">
+                    <h2 class="form-title">Регистрация</h2>
+                    <form id="register-form">
+                        <div class="form-group">
+                            <input type="text" id="reg-username" placeholder="Логин" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="reg-password" placeholder="Пароль" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="reg-name" placeholder="ФИО" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="reg-email" placeholder="Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" id="reg-phone" placeholder="Телефон" required>
+                        </div>
+                        <div class="form-group">
+                            <select id="reg-role" required>
+                                <option value="">Выберите роль</option>
+                                <option value="user">Пользователь</option>
+                                <option value="landlord">Арендодатель</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Зарегистрироваться</button>
+                    </form>
+                    <p style="text-align: center; margin-top: 1rem;">
+                        Уже есть аккаунт? <a onclick="showSection('login')" style="color: #4f46e5; cursor: pointer;">Войдите</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Секция списка площадок -->
+            <div id="properties-section" class="section">
+                <h2 class="section-title">Доступные торговые площади</h2>
+                <div class="filters">
+                    <div class="filter-grid">
+                        <div class="form-group">
+                            <input type="text" id="search-input" placeholder="Поиск по названию..." onkeyup="filterProperties()">
+                        </div>
+                        <div class="form-group">
+                            <select id="city-filter" onchange="filterProperties()">
+                                <option value="">Все города</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select id="area-filter" onchange="filterProperties()">
+                                <option value="">Все площади</option>
+                                <option value="50">До 50 м²</option>
+                                <option value="100">До 100 м²</option>
+                                <option value="200">До 200 м²</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="property-grid" id="properties-list">
+                    <!-- Сюда загружаются площадки -->
+                </div>
+            </div>
+
+            <!-- Секция городов -->
+            <div id="cities-section" class="section">
+                <h2 class="section-title">Города Беларуси</h2>
+                <div class="cities-grid" id="cities-list">
+                    <!-- Список городов -->
+                </div>
+            </div>
+
+            <!-- Секция профиля -->
+            <div id="profile-section" class="section">
+                <div class="profile-card">
+                    <div id="profile-avatar" class="profile-avatar"></div>
+                    <h2 id="profile-name"></h2>
+                    <p id="profile-role"></p>
+                    <p id="profile-email"></p>
+                    <p id="profile-phone"></p>
+                    <p><strong>Рейтинг:</strong> <span id="profile-rating">0</span>/5</p>
+                </div>
+            </div>
+
+            <!-- Секция моих площадок -->
+            <div id="my-properties-section" class="section">
+                <h2 class="section-title">Мои торговые площади</h2>
+                <div class="property-grid" id="my-properties-list">
+                    <!-- Мои площадки -->
+                </div>
+            </div>
+
+            <!-- Секция добавления площадки -->
+            <div id="add-property-section" class="section">
+                <h2 class="section-title">Добавить новую торговую площадь</h2>
+                <div class="filters">
+                    <form id="add-property-form">
+                        <div class="filter-grid">
+                            <div class="form-group">
+                                <input type="text" id="title" placeholder="Название площадки" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="number" id="area" placeholder="Площадь (м²)" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="number" id="price" placeholder="Цена аренды в месяц ($)" required>
+                            </div>
+                            <div class="form-group">
+                                <select id="property-city" required>
+                                    <option value="">Выберите город</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <textarea id="description" placeholder="Описание" required rows="3"></textarea>
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <input type="text" id="address" placeholder="Точный адрес" required>
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <input type="text" id="image-url" placeholder="URL изображения" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Отправить на модерацию</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Админ-панель -->
+            <div id="admin-panel-section" class="section">
+                <h2 class="section-title">Админ-панель</h2>
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-properties">0</h3>
+                            <p>Всего площадок</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="pending-properties">0</h3>
+                            <p>На модерации</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-users">0</h3>
+                            <p>Пользователей</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-reviews">0</h3>
+                            <p>Отзывов</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="admin-actions">
+                    <h3 style="margin-bottom: 1rem;">Быстрые действия</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="showSection('admin-moderation')">
+                            <i class="fas fa-check-circle"></i> Модерация заявок
+                        </button>
+                        <button class="btn btn-secondary" onclick="showAllUsers()">
+                            <i class="fas fa-users"></i> Управление пользователями
+                        </button>
+                        <button class="btn btn-warning" onclick="showAllProperties()">
+                            <i class="fas fa-list"></i> Все площадки
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Секция модерации для админа -->
+            <div id="admin-moderation-section" class="section">
+                <h2 class="section-title">Модерация заявок</h2>
+                <div class="filters">
+                    <div class="filter-grid">
+                        <div class="form-group">
+                            <input type="text" id="moderation-search" placeholder="Поиск по названию..." onkeyup="filterModeration()">
+                        </div>
+                        <div class="form-group">
+                            <select id="moderation-city" onchange="filterModeration()">
+                                <option value="">Все города</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="property-grid" id="moderation-list">
+                    <!-- Заявки на модерацию -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальные окна -->
+    <div id="property-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    <div id="review-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeReviewModal()">&times;</span>
+            <div id="review-modal-content"></div>
+        </div>
+    </div>
+
+    <div id="reject-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeRejectModal()">&times;</span>
+            <h3>Причина отклонения</h3>
+            <textarea id="reject-reason" placeholder="Укажите причину отклонения..." rows="4" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 10px; margin: 1rem 0;"></textarea>
+            <button onclick="submitRejection()" class="btn btn-danger">Отклонить</button>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
