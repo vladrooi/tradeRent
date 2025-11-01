@@ -658,6 +658,47 @@
             border-top: 1px solid #374151;
             color: #9ca3af;
         }
+        .support-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(79, 70, 229, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .support-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.6);
+        }
+        .support-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1001;
+            backdrop-filter: blur(5px);
+        }
+        .support-content {
+            background: white;
+            margin: 10% auto;
+            padding: 2rem;
+            border-radius: 20px;
+            max-width: 500px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+        }
     </style>
 </head>
 <body>
@@ -758,7 +799,6 @@
                 </div>
             </div>
 
-            <!-- Остальные секции остаются без изменений, но с улучшенными заголовками -->
             <!-- Секция входа -->
             <div id="login-section" class="section">
                 <h2 class="section-title">Вход в систему</h2>
@@ -859,9 +899,146 @@
                 </div>
             </div>
 
-            <!-- Остальные секции (города, профиль, админ-панель и т.д.) -->
-            <!-- ... -->
+            <!-- Секция городов -->
+            <div id="cities-section" class="section">
+                <h2 class="section-title">Города Беларуси</h2>
+                <div class="cities-grid" id="cities-list">
+                    <!-- Список городов -->
+                </div>
+            </div>
 
+            <!-- Секция профиля -->
+            <div id="profile-section" class="section">
+                <div class="profile-card">
+                    <div id="profile-avatar" class="profile-avatar"></div>
+                    <h2 id="profile-name"></h2>
+                    <p id="profile-role"></p>
+                    <p id="profile-email"></p>
+                    <p id="profile-phone"></p>
+                    <p><strong>Рейтинг:</strong> <span id="profile-rating">0</span>/5</p>
+                </div>
+            </div>
+
+            <!-- Секция моих площадок -->
+            <div id="my-properties-section" class="section">
+                <h2 class="section-title">Мои торговые площади</h2>
+                <div class="property-grid" id="my-properties-list">
+                    <!-- Мои площадки -->
+                </div>
+            </div>
+
+            <!-- Секция добавления площадки -->
+            <div id="add-property-section" class="section">
+                <h2 class="section-title">Добавить новую торговую площадь</h2>
+                <div class="filters">
+                    <form id="add-property-form">
+                        <div class="filter-grid">
+                            <div class="form-group">
+                                <input type="text" id="title" placeholder="Название площадки" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="number" id="area" placeholder="Площадь (м²)" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="number" id="price" placeholder="Цена аренды в месяц ($)" required>
+                            </div>
+                            <div class="form-group">
+                                <select id="property-city" required>
+                                    <option value="">Выберите город</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <textarea id="description" placeholder="Описание" required rows="3"></textarea>
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <input type="text" id="address" placeholder="Точный адрес" required>
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <input type="text" id="image-url" placeholder="URL изображения" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Отправить на модерацию</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Админ-панель -->
+            <div id="admin-panel-section" class="section">
+                <h2 class="section-title">Админ-панель</h2>
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-properties">0</h3>
+                            <p>Всего площадок</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="pending-properties">0</h3>
+                            <p>На модерации</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-users">0</h3>
+                            <p>Пользователей</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="total-reviews">0</h3>
+                            <p>Отзывов</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="admin-actions">
+                    <h3 style="margin-bottom: 1rem;">Быстрые действия</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="showSection('admin-moderation')">
+                            <i class="fas fa-check-circle"></i> Модерация заявок
+                        </button>
+                        <button class="btn btn-secondary" onclick="showAllUsers()">
+                            <i class="fas fa-users"></i> Управление пользователями
+                        </button>
+                        <button class="btn btn-warning" onclick="showAllProperties()">
+                            <i class="fas fa-list"></i> Все площадки
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Секция модерации для админа -->
+            <div id="admin-moderation-section" class="section">
+                <h2 class="section-title">Модерация заявок</h2>
+                <div class="filters">
+                    <div class="filter-grid">
+                        <div class="form-group">
+                            <input type="text" id="moderation-search" placeholder="Поиск по названию..." onkeyup="filterModeration()">
+                        </div>
+                        <div class="form-group">
+                            <select id="moderation-city" onchange="filterModeration()">
+                                <option value="">Все города</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="property-grid" id="moderation-list">
+                    <!-- Заявки на модерацию -->
+                </div>
+            </div>
         </div>
 
         <!-- Футер -->
@@ -890,6 +1067,11 @@
         </div>
     </div>
 
+    <!-- Кнопка поддержки -->
+    <div class="support-btn" onclick="openSupportModal()">
+        <i class="fas fa-headset"></i>
+    </div>
+
     <!-- Модальные окна -->
     <div id="property-modal" class="modal">
         <div class="modal-content">
@@ -911,6 +1093,21 @@
             <h3>Причина отклонения</h3>
             <textarea id="reject-reason" placeholder="Укажите причину отклонения..." rows="4" style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 10px; margin: 1rem 0;"></textarea>
             <button onclick="submitRejection()" class="btn btn-danger">Отклонить</button>
+        </div>
+    </div>
+
+    <div id="support-modal" class="support-modal">
+        <div class="support-content">
+            <span class="close" onclick="closeSupportModal()">&times;</span>
+            <h2>Служба поддержки</h2>
+            <p>Мы всегда готовы помочь вам!</p>
+            <div style="margin: 2rem 0;">
+                <p><strong>Телефон:</strong> +375 (29) 123-45-67</p>
+                <p><strong>Email:</strong> support@traderent.by</p>
+                <p><strong>Telegram:</strong> @traderent_support</p>
+                <p><strong>Время работы:</strong> круглосуточно</p>
+            </div>
+            <button class="btn btn-primary" onclick="closeSupportModal()" style="width: 100%;">Закрыть</button>
         </div>
     </div>
 
