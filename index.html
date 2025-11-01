@@ -1,461 +1,98 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TradeRent - Аренда торговых площадей</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f8f9fa;
-        }
-
-        /* Header */
-        header {
-            background: linear-gradient(135deg, #2c3e50, #34495e);
-            color: white;
-            padding: 1rem 0;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #3498db;
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            gap: 2rem;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        nav a:hover {
-            color: #3498db;
-        }
-
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.9)), url('https://images.unsplash.com/photo-1497366754035-f200968a6e72?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
-            background-size: cover;
-            background-position: center;
-            color: white;
-            text-align: center;
-            padding: 4rem 0;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .hero p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
-        }
-
-        /* Main Content */
-        .main-content {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            gap: 2rem;
-            padding: 2rem 0;
-        }
-
-        /* Booking Form */
-        .booking-form {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e0e0e0;
-            border-radius: 5px;
-            font-size: 1rem;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #3498db;
-        }
-
-        .btn {
-            background: #3498db;
-            color: white;
-            padding: 0.75rem 2rem;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.3s;
-            width: 100%;
-        }
-
-        .btn:hover {
-            background: #2980b9;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        .contact-info {
-            margin-bottom: 2rem;
-        }
-
-        .contact-info h3 {
-            color: #2c3e50;
-            margin-bottom: 1rem;
-        }
-
-        .contact-info p {
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* Footer */
-        footer {
-            background: #2c3e50;
-            color: white;
-            padding: 3rem 0 1rem;
-            margin-top: 3rem;
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .footer-section h3 {
-            color: #3498db;
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-        }
-
-        .footer-section ul {
-            list-style: none;
-        }
-
-        .footer-section ul li {
-            margin-bottom: 0.5rem;
-        }
-
-        .footer-section a {
-            color: #bdc3c7;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer-section a:hover {
-            color: #3498db;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .social-links a {
-            color: white;
-            background: #34495e;
-            padding: 0.5rem;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background 0.3s;
-        }
-
-        .social-links a:hover {
-            background: #3498db;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            padding-top: 2rem;
-            border-top: 1px solid #34495e;
-            color: #bdc3c7;
-        }
-
-        /* Features Section */
-        .features {
-            background: white;
-            padding: 3rem 0;
-            margin: 2rem 0;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .feature-card {
-            text-align: center;
-            padding: 2rem;
-            background: #f8f9fa;
-            border-radius: 10px;
-            transition: transform 0.3s;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            color: #3498db;
-            margin-bottom: 1rem;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-content {
-                grid-template-columns: 1fr;
-            }
-            
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            nav ul {
-                gap: 1rem;
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Header -->
-    <header>
+    <!-- Футер -->
+    <footer style="background: #1f2937; color: white; padding: 3rem 0; margin-top: 4rem;">
         <div class="container">
-            <div class="header-content">
-                <div class="logo">TradeRent</div>
-                <nav>
-                    <ul>
-                        <li><a href="#booking">Бронирование</a></li>
-                        <li><a href="#about">О нас</a></li>
-                        <li><a href="#contacts">Контакты</a></li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>Аренда торговых площадей</h1>
-            <p>Лучшие места для вашего бизнеса в удобных локациях</p>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features" id="about">
-        <div class="container">
-            <h2 style="text-align: center; margin-bottom: 1rem; color: #2c3e50;">Почему выбирают нас?</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">📍</div>
-                    <h3>Удобное расположение</h3>
-                    <p>Торговые площади в центре города с высокой проходимостью</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💼</div>
-                    <h3>Гибкие условия</h3>
-                    <p>Аренда от 1 дня до нескольких лет</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3>Полная безопасность</h3>
-                    <p>Охраняемая территория и системы видеонаблюдения</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🚚</div>
-                    <h3>Всё включено</h3>
-                    <p>Коммунальные услуги, уборка, Wi-Fi включены в стоимость</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Main Content -->
-    <div class="container">
-        <div class="main-content">
-            <!-- Booking Form -->
-            <div class="booking-form" id="booking">
-                <h2>Забронировать площадку</h2>
-                <form id="rentalForm">
-                    <div class="form-group">
-                        <label for="location">Локация:</label>
-                        <select id="location" required>
-                            <option value="">Выберите локацию</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="area">Площадь (м²):</label>
-                        <select id="area" required>
-                            <option value="">Выберите площадь</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="startDate">Дата начала аренды:</label>
-                        <input type="date" id="startDate" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="duration">Срок аренды (дней):</label>
-                        <input type="number" id="duration" min="1" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contactName">Ваше имя:</label>
-                        <input type="text" id="contactName" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="contactPhone">Телефон:</label>
-                        <input type="tel" id="contactPhone" required>
-                    </div>
-                    
-                    <button type="submit" class="btn">Забронировать</button>
-                </form>
-            </div>
-
-            <!-- Sidebar -->
-            <div class="sidebar">
-                <div class="contact-info">
-                    <h3>Контактная информация</h3>
-                    <p>📞 +7 (999) 123-45-67</p>
-                    <p>✉️ info@traderent.ru</p>
-                    <p>📍 г. Москва, ул. Торговая, 15</p>
-                    <p>🕒 Ежедневно 9:00 - 21:00</p>
-                </div>
-                
-                <div class="price-info">
-                    <h3>Стоимость аренды</h3>
-                    <p>От 1000 руб/день</p>
-                    <p>Скидки при долгосрочной аренде</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer id="contacts">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h3>TradeRent</h3>
-                    <p>Предоставляем лучшие торговые площади для вашего бизнеса с 2015 года.</p>
-                    <div class="social-links">
-                        <a href="#">VK</a>
-                        <a href="#">TG</a>
-                        <a href="#">IG</a>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                <div>
+                    <h3 style="color: #4f46e5; margin-bottom: 1rem;">TradeRent</h3>
+                    <p>Платформа для аренды торговых площадей в Беларуси. Более 1000 площадок по всей стране.</p>
+                    <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                        <a href="#" style="color: white; background: #374151; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                            <i class="fab fa-vk"></i>
+                        </a>
+                        <a href="#" style="color: white; background: #374151; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                            <i class="fab fa-telegram"></i>
+                        </a>
+                        <a href="#" style="color: white; background: #374151; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none;">
+                            <i class="fab fa-instagram"></i>
+                        </a>
                     </div>
                 </div>
                 
-                <div class="footer-section">
-                    <h3>Услуги</h3>
-                    <ul>
-                        <li><a href="#">Аренда торговых площадей</a></li>
-                        <li><a href="#">Консультация по выбору локации</a></li>
-                        <li><a href="#">Юридическое сопровождение</a></li>
-                        <li><a href="#">Рекламная поддержка</a></li>
-                    </ul>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Контакты</h4>
+                    <p>📞 +375 (29) 123-45-67</p>
+                    <p>✉️ info@traderent.by</p>
+                    <p>📍 г. Минск, ул. Немига, 5</p>
+                    <p>🕒 Пн-Пт: 9:00-18:00</p>
                 </div>
                 
-                <div class="footer-section">
-                    <h3>Контакты</h3>
-                    <ul>
-                        <li>📞 +7 (999) 123-45-67</li>
-                        <li>✉️ info@traderent.ru</li>
-                        <li>📍 Москва, ул. Торговая, 15</li>
-                        <li>🕒 9:00 - 21:00</li>
-                    </ul>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Помощь</h4>
+                    <p><a href="#" style="color: #9ca3af; text-decoration: none;">Частые вопросы</a></p>
+                    <p><a href="#" style="color: #9ca3af; text-decoration: none;">Как арендовать</a></p>
+                    <p><a href="#" style="color: #9ca3af; text-decoration: none;">Условия аренды</a></p>
+                    <p><a href="#" style="color: #9ca3af; text-decoration: none;">Связаться с поддержкой</a></p>
                 </div>
                 
-                <div class="footer-section">
-                    <h3>Помощь</h3>
-                    <ul>
-                        <li><a href="#">Частые вопросы</a></li>
-                        <li><a href="#">Документы</a></li>
-                        <li><a href="#">Оставить отзыв</a></li>
-                        <li><a href="#">Связаться с администратором</a></li>
-                    </ul>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Для арендодателей</h4>
+                    <p><a href="#" style="color: #9ca3af; text-decoration: none;">Добавить площадку</a></p>
+                    <p><a href="#" style="color: #9ca3af; text-decoration: none;">Тарифы</a></p>
+                    <p><a href="#" style="color: #9ca3af; text-decoration: none;">Рекомендации</a></p>
+                    <p><a href="#" style="color: #9ca3af; text-decoration: none;">Партнёрская программа</a></p>
                 </div>
             </div>
             
-            <div class="footer-bottom">
+            <div style="border-top: 1px solid #374151; padding-top: 2rem; text-align: center; color: #9ca3af;">
                 <p>&copy; 2024 TradeRent. Все права защищены.</p>
             </div>
         </div>
     </footer>
 
-    <script src="database.js"></script>
-    <script src="app.js"></script>
-</body>
-</html>
+    <!-- Секция "О нас" -->
+    <div id="about-section" class="section">
+        <div class="container">
+            <h2 class="section-title">О компании TradeRent</h2>
+            <div style="background: white; padding: 3rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;">
+                    <div>
+                        <h3 style="color: #1f2937; margin-bottom: 1rem;">Мы помогаем бизнесу расти</h3>
+                        <p style="color: #6b7280; line-height: 1.6; margin-bottom: 1.5rem;">
+                            TradeRent - ведущая платформа по аренде торговых площадей в Беларуси. 
+                            Мы объединяем арендодателей и предпринимателей, создавая идеальные условия 
+                            для развития бизнеса.
+                        </p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div>
+                                <h4 style="color: #10b981; margin-bottom: 0.5rem;">1000+</h4>
+                                <p style="color: #6b7280; font-size: 0.9rem;">Площадок в аренду</p>
+                            </div>
+                            <div>
+                                <h4 style="color: #10b981; margin-bottom: 0.5rem;">50+</h4>
+                                <p style="color: #6b7280; font-size: 0.9rem;">Городов Беларуси</p>
+                            </div>
+                            <div>
+                                <h4 style="color: #10b981; margin-bottom: 0.5rem;">95%</h4>
+                                <p style="color: #6b7280; font-size: 0.9rem;">Довольных клиентов</p>
+                            </div>
+                            <div>
+                                <h4 style="color: #10b981; margin-bottom: 0.5rem;">24/7</h4>
+                                <p style="color: #6b7280; font-size: 0.9rem;">Поддержка</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 2rem; border-radius: 15px; color: white;">
+                            <h4 style="margin-bottom: 1rem;">Свяжитесь с нами</h4>
+                            <p style="margin-bottom: 1.5rem;">Есть вопросы? Мы всегда готовы помочь!</p>
+                            <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 10px;">
+                                <p>📞 +375 (29) 123-45-67</p>
+                                <p>✉️ support@traderent.by</p>
+                                <p>📍 Минск, ул. Немига, 5</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
