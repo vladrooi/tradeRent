@@ -1,57 +1,50 @@
-let currentUser = null;
-let currentPropertyModal = null;
-let currentReviewRating = 0;
-let currentRejectPropertyId = null;
-
-// Инициализация при загрузке
-document.addEventListener('DOMContentLoaded', function() {
-    initializeDatabase();
-    populateCityFilters();
-    checkAuth();
-    setupEventListeners();
-});
-
-// Настройка обработчиков событий
-function setupEventListeners() {
-    document.getElementById('login-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        login();
-    });
+// Добавляем в начало app.js новую функцию для обновления счётчика
+function updatePropertiesCount() {
+    const properties = getApprovedProperties();
+    const searchQuery = document.getElementById('search-input').value;
+    const cityFilter = document.getElementById('city-filter').value;
+    const areaFilter = document.getElementById('area-filter').value;
+    const priceFilter = document.getElementById('price-filter').value;
     
-    document.getElementById('register-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        register();
-    });
+    let filteredProperties = properties;
     
-    document.getElementById('add-property-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        addNewProperty();
-    });
+    if (searchQuery) {
+        filteredProperties = filteredProperties.filter(prop => 
+            prop.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            prop.description.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+    }
+    
+    if (cityFilter) {
+        filteredProperties = filteredProperties.filter(prop => prop.city === cityFilter);
+    }
+    
+    if (areaFilter) {
+        filteredProperties = filteredProperties.filter(prop => prop.area <= parseInt(areaFilter));
+    }
+    
+    if (priceFilter) {
+        filteredProperties = filteredProperties.filter(prop => prop.price <= parseInt(priceFilter));
+    }
+    
+    document.getElementById('properties-count').textContent = filteredProperties.length;
 }
 
-// Заполнение фильтров городов
-function populateCityFilters() {
-    const cities = getCities();
-    const cityFilter = document.getElementById('city-filter');
-    const propertyCity = document.getElementById('property-city');
-    const moderationCity = document.getElementById('moderation-city');
-    
-    cities.forEach(city => {
-        cityFilter.innerHTML += `<option value="${city}">${city}</option>`;
-        propertyCity.innerHTML += `<option value="${city}">${city}</option>`;
-        moderationCity.innerHTML += `<option value="${city}">${city}</option>`;
-    });
+// Обновляем функцию filterProperties
+function filterProperties() {
+    // ... существующий код filterProperties ...
+    updatePropertiesCount(); // Добавляем эту строку в конец функции
 }
 
-// Показать секцию
-function showSection(sectionName) {
-    // Скрыть все секции
-    document.querySelectorAll('.section').forEach(section => {
-        section.classList.remove('active');
-    });
+// Обновляем функцию showProperties
+function showProperties() {
+    const properties = getApprovedProperties();
+    const container = document.getElementById('properties-list');
     
-    // Показать нужную секцию
-    document.getElementById(sectionName + '-section').classList.add('active');
+    updatePropertiesCount(); // Добавляем обновление счётчика
+    
+    // ... остальной код showProperties ...
+}
     
     // Загрузить данные для секции
     switch(sectionName) {
