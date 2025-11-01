@@ -48,6 +48,17 @@ function initializeDatabase() {
                 phone: '+375 (25) 555-55-55',
                 rating: 4.8,
                 registrationDate: new Date().toISOString()
+            },
+            {
+                id: 5,
+                username: 'investor',
+                password: 'investor123',
+                role: 'landlord',
+                name: 'Дмитрий Смирнов',
+                email: 'dmitry@example.com',
+                phone: '+375 (33) 777-77-77',
+                rating: 4.6,
+                registrationDate: new Date().toISOString()
             }
         ];
         localStorage.setItem('users', JSON.stringify(initialUsers));
@@ -174,44 +185,45 @@ function initializeDatabase() {
                 features: ["Торговый комплекс", "Кондиционер", "Эскалатор", "Охрана", "Уборка"],
                 status: "approved",
                 createdAt: new Date().toISOString()
-            }
-        ];
-        localStorage.setItem('properties', JSON.stringify(initialData));
-    }
-
-    if (!localStorage.getItem('reviews')) {
-        const initialReviews = [
-            {
-                id: 1,
-                authorId: 3,
-                authorName: "Петр Сидоров",
-                targetUserId: 2,
-                rating: 5,
-                comment: "Отличный арендодатель! Все условия соблюдаются, быстро решаются вопросы. Площадка соответствует описанию. Рекомендую!",
-                createdAt: new Date('2024-01-15').toISOString()
             },
             {
-                id: 2,
-                authorId: 1,
-                authorName: "Администратор Системы",
-                targetUserId: 2,
-                rating: 4,
-                comment: "Ответственный партнер, площадки всегда в отличном состоянии. Рекомендую к сотрудничеству.",
-                createdAt: new Date('2024-01-10').toISOString()
+                id: 9,
+                title: "Бизнес-центр 'Столица'",
+                description: "Элитное помещение в бизнес-центре класса А. Подходит для представительства, шоу-рума или премиального ритейла.",
+                area: 180,
+                price: 5500,
+                address: "б-р Мулявина, 10",
+                city: "Минск",
+                ownerId: 5,
+                ownerName: "Дмитрий Смирнов",
+                images: ["https://images.unsplash.com/photo-1497366754035-f200968a6e72?w=600&h=400&fit=crop"],
+                features: ["Бизнес-центр", "Консьерж", "Паркинг", "Лифт", "Система безопасности"],
+                status: "approved",
+                createdAt: new Date().toISOString()
             },
             {
-                id: 3,
-                authorId: 3,
-                authorName: "Петр Сидоров",
-                targetUserId: 4,
-                rating: 5,
-                comment: "Прекрасные помещения в хороших локациях. Все четко по договору, без surprises. Спасибо!",
-                createdAt: new Date('2024-01-20').toISOString()
-            }
-        ];
-        localStorage.setItem('reviews', JSON.stringify(initialReviews));
-    }
-}
-
-// Остальные функции database.js остаются без изменений...
-// (getAllUsers, findUser, registerUser, и т.д.)
+                id: 10,
+                title: "Торговая галерея в Гродно",
+                description: "Помещение в крытой торговой галерее. Постоянный поток покупателей, отличное расположение в центре города.",
+                area: 75,
+                price: 2200,
+                address: "ул. Ожешко, 25",
+                city: "Гродно",
+                ownerId: 5,
+                ownerName: "Дмитрий Смирнов",
+                images: ["https://images.unsplash.com/photo-1567496898661-0d17f0174b1f?w=600&h=400&fit=crop"],
+                features: ["Торговая галерея", "Отопление", "Охранная система", "Общественные зоны"],
+                status: "approved",
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: 11,
+                title: "Помещение на вокзале",
+                description: "Уникальное расположение в здании железнодорожного вокзала. Высокий пассажиропоток 24/7. Идеально для fast-food, сувениров, аптеки.",
+                area: 55,
+                price: 3200,
+                address: "Железнодорожный вокзал",
+                city: "Минск",
+                ownerId: 5,
+                ownerName: "Дмитрий Смирнов",
+                images: ["https://images.unsplash.com/photo-1582653292213-
