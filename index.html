@@ -62,18 +62,23 @@
             <section id="hero-section" class="section active">
                 <div class="hero">
                     <div class="hero-content">
-                        <h1 class="hero-title">Найдите идеальную торговую площадь</h1>
-                        <p class="hero-subtitle">Более 1000 площадок по всей Беларуси для вашего бизнеса. Быстрый поиск, безопасные сделки, лучшие цены.</p>
-                        <div class="hero-actions">
+                        <h1 class="hero-title fade-in-up" style="animation-delay: 0.2s">
+                            Найдите идеальную торговую площадь
+                        </h1>
+                        <p class="hero-subtitle fade-in-up" style="animation-delay: 0.4s">
+                            Более 1000 площадок по всей Беларуси для вашего бизнеса. 
+                            Быстрый поиск, безопасные сделки, лучшие цены.
+                        </p>
+                        <div class="hero-actions fade-in-up" style="animation-delay: 0.6s">
                             <button class="btn btn-primary btn-large" onclick="showSection('properties')">
                                 <i class="fas fa-search"></i> Начать поиск
                             </button>
-                            <button class="btn btn-outline btn-large" onclick="showSection('register')">
+                            <button class="btn btn-outline btn-large" onclick="currentUser ? showSection('add-property') : showSection('register')">
                                 <i class="fas fa-plus"></i> Добавить площадку
                             </button>
                         </div>
                     </div>
-                    <div class="hero-stats">
+                    <div class="hero-stats fade-in-up" style="animation-delay: 0.8s">
                         <div class="stat-item">
                             <div class="stat-number">1,250+</div>
                             <div class="stat-label">Торговых площадей</div>
@@ -91,7 +96,7 @@
 
                 <!-- Features -->
                 <div class="features-section">
-                    <h2 class="section-title">Почему выбирают нас</h2>
+                    <h2 class="section-title gradient-text">Почему выбирают нас</h2>
                     <div class="features-grid">
                         <div class="feature-card">
                             <div class="feature-icon">
@@ -129,7 +134,7 @@
             <section id="login-section" class="section">
                 <div class="auth-container">
                     <div class="auth-card">
-                        <h2>Вход в систему</h2>
+                        <h2 class="gradient-text">Вход в систему</h2>
                         <form id="login-form" class="auth-form">
                             <div class="form-group">
                                 <label>Логин</label>
@@ -161,7 +166,7 @@
             <section id="register-section" class="section">
                 <div class="auth-container">
                     <div class="auth-card">
-                        <h2>Регистрация</h2>
+                        <h2 class="gradient-text">Регистрация</h2>
                         <form id="register-form" class="auth-form">
                             <div class="form-row">
                                 <div class="form-group">
@@ -200,8 +205,8 @@
             <section id="properties-section" class="section">
                 <div class="container">
                     <div class="section-header">
-                        <h2>Доступные торговые площади</h2>
-                        <p>Найдено <span id="properties-count">0</span> площадок по вашим критериям</p>
+                        <h2 class="gradient-text">Доступные торговые площади</h2>
+                        <p>Найдено <span id="properties-count" class="gradient-text">0</span> площадок по вашим критериям</p>
                     </div>
                     
                     <div class="filters-card">
@@ -243,7 +248,7 @@
             <section id="add-property-section" class="section">
                 <div class="container">
                     <div class="section-header">
-                        <h2>Добавить новую площадку</h2>
+                        <h2 class="gradient-text">Добавить новую площадку</h2>
                         <p>Заполните информацию о вашей торговой площади</p>
                     </div>
                     
@@ -293,7 +298,7 @@
             <section id="my-properties-section" class="section">
                 <div class="container">
                     <div class="section-header">
-                        <h2>Мои торговые площади</h2>
+                        <h2 class="gradient-text">Мои торговые площади</h2>
                         <p>Управление вашими площадками</p>
                     </div>
                     
@@ -311,7 +316,7 @@
                             <div id="profile-avatar" class="avatar-content"></div>
                         </div>
                         <div class="profile-info">
-                            <h2 id="profile-name"></h2>
+                            <h2 id="profile-name" class="gradient-text"></h2>
                             <p id="profile-role" class="role-badge"></p>
                             <p id="profile-email"></p>
                             <p id="profile-phone"></p>
@@ -355,7 +360,7 @@
             <section id="cities-section" class="section">
                 <div class="container">
                     <div class="section-header">
-                        <h2>Города Беларуси</h2>
+                        <h2 class="gradient-text">Города Беларуси</h2>
                         <p>Выберите город для просмотра доступных площадок</p>
                     </div>
                     
@@ -369,7 +374,7 @@
             <section id="admin-panel-section" class="section">
                 <div class="container">
                     <div class="section-header">
-                        <h2>Панель администратора</h2>
+                        <h2 class="gradient-text">Панель администратора</h2>
                         <p>Управление системой и модерация контента</p>
                     </div>
 
@@ -449,7 +454,7 @@
             <section id="admin-moderation-section" class="section">
                 <div class="container">
                     <div class="section-header">
-                        <h2>Модерация площадок</h2>
+                        <h2 class="gradient-text">Модерация площадок</h2>
                         <p>Проверка и утверждение новых торговых площадей</p>
                     </div>
 
@@ -476,7 +481,7 @@
             <section id="about-section" class="section">
                 <div class="container">
                     <div class="about-header">
-                        <h2>О компании TradeRent</h2>
+                        <h2 class="gradient-text">О компании TradeRent</h2>
                         <p>Ведущая платформа по аренде торговых площадей в Беларуси</p>
                     </div>
                     
@@ -581,7 +586,7 @@
     <div id="reject-modal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeRejectModal()">&times;</span>
-            <h3>Причина отклонения</h3>
+            <h3 class="gradient-text">Причина отклонения</h3>
             <textarea id="reject-reason" placeholder="Укажите подробную причину отклонения площадки..." rows="4"></textarea>
             <div class="modal-actions">
                 <button class="btn btn-secondary" onclick="closeRejectModal()">Отмена</button>
@@ -596,7 +601,7 @@
             <div class="support-modal-content">
                 <div class="support-header">
                     <i class="fas fa-headset"></i>
-                    <h2>Служба поддержки</h2>
+                    <h2 class="gradient-text">Служба поддержки</h2>
                 </div>
                 <div class="support-contact">
                     <div class="contact-person">
