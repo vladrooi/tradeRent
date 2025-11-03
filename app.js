@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
     populateCityFilters();
     checkAuth();
     setupEventListeners();
+    initializeAnimations();
+    setupQuickCitySearch();
+    setupParallax();
     showSection('hero');
 });
 
@@ -44,6 +47,76 @@ function setupEventListeners() {
             closeSupportModal();
         }
     });
+}
+
+// Анимации
+function initializeAnimations() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animation = `fadeInUp 0.8s ease-out ${entry.target.dataset.delay || '0s'} forwards`;
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.property-card, .feature-card, .city-card, .stat-card').forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.dataset.delay = `${index * 0.1}s`;
+        observer.observe(el);
+    });
+}
+
+// Параллакс эффект
+function setupParallax() {
+    const hero = document.querySelector('.hero');
+    if (hero) {
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * -0.5;
+            hero.style.transform = `translateY(${rate}px)`;
+        });
+    }
+}
+
+// Быстрый поиск по городам
+function setupQuickCitySearch() {
+    const citiesList = document.getElementById('cities-list');
+    
+    if (citiesList) {
+        citiesList.addEventListener('click', function(e) {
+            const cityCard = e.target.closest('.city-card');
+            if (cityCard) {
+                const cityName = cityCard.querySelector('.city-name').textContent;
+                
+                // Устанавливаем фильтр города
+                document.getElementById('city-filter').value = cityName;
+                
+                // Показываем секцию с площадками
+                showSection('properties');
+                
+                // Применяем фильтр
+                setTimeout(() => {
+                    filterProperties();
+                    
+                    // Плавная прокрутка к результатам
+                    document.getElementById('properties-section').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    
+                    // Показываем уведомление
+                    showSuccessNotification(`Показаны площадки в городе ${cityName}`);
+                }, 100);
+            }
+        });
+    }
 }
 
 // Заполнение фильтров городов
@@ -207,7 +280,7 @@ function showProperties() {
     
     if (properties.length === 0) {
         container.innerHTML = `
-            <div class="property-card text-center">
+            <div class="property-card text-center" style="grid-column: 1 / -1;">
                 <div style="font-size: 4rem; color: #e5e7eb; margin-bottom: 1rem;">🏪</div>
                 <h3>Нет доступных площадок</h3>
                 <p>Станьте первым арендодателем!</p>
@@ -288,11 +361,14 @@ function showCities() {
         const propertiesCount = getCityPropertiesCount(city);
         const hasProperties = propertiesCount > 0;
         const icons = ['🏙️', '🏛️', '🌉', '🏰', '🌃', '🎡'];
+        const colors = ['#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#3B82F6', '#8B5CF6'];
         
         return `
-            <div class="city-card" onclick="showCityProperties('${city}')">
-                <div class="city-icon">${icons[cities.indexOf(city)]}</div>
-                <h3 class="city-name">${city}</h3>
+            <div class="city-card hover-lift" style="border-color: ${colors[cities.indexOf(city) % colors.length]}20;">
+                <div class="city-icon" style="color: ${colors[cities.indexOf(city) % colors.length]}">
+                    ${icons[cities.indexOf(city) % icons.length]}
+                </div>
+                <h3 class="city-name gradient-text">${city}</h3>
                 <p class="city-properties ${hasProperties ? 'has-properties' : 'no-properties'}">
                     ${hasProperties ? 
                         `✅ ${propertiesCount} площадок в аренду` : 
@@ -300,12 +376,18 @@ function showCities() {
                     }
                 </p>
                 ${hasProperties ? `
-                    <div style="margin-top: 1rem;">
-                        <button class="btn btn-outline" onclick="event.stopPropagation(); showCityProperties('${city}')">
+                    <div style="margin-top: 1.5rem;">
+                        <button class="btn btn-primary" onclick="event.stopPropagation();">
                             <i class="fas fa-search"></i> Смотреть площадки
                         </button>
                     </div>
-                ` : ''}
+                ` : `
+                    <div style="margin-top: 1.5rem;">
+                        <button class="btn btn-outline" onclick="event.stopPropagation(); showSection('add-property')">
+                            <i class="fas fa-plus"></i> Стать первым
+                        </button>
+                    </div>
+                `}
             </div>
         `;
     }).join('');
@@ -317,7 +399,7 @@ function showCityProperties(city) {
     
     if (properties.length === 0) {
         container.innerHTML = `
-            <div class="property-card text-center">
+            <div class="property-card text-center" style="grid-column: 1 / -1;">
                 <div style="font-size: 4rem; color: #e5e7eb; margin-bottom: 1rem;">🏙️</div>
                 <h3>${city}</h3>
                 <p>В этом городе пока нет доступных торговых площадей.</p>
@@ -422,7 +504,7 @@ function showMyProperties() {
     
     if (properties.length === 0) {
         container.innerHTML = `
-            <div class="property-card text-center">
+            <div class="property-card text-center" style="grid-column: 1 / -1;">
                 <div style="font-size: 4rem; color: #e5e7eb; margin-bottom: 1rem;">🏪</div>
                 <h3>У вас пока нет площадок</h3>
                 <p>Добавьте свою первую торговую площадь и начните получать заявки!</p>
@@ -543,10 +625,29 @@ function showAdminPanel() {
     }
     
     const stats = getAdminStats();
-    document.getElementById('total-properties').textContent = stats.totalProperties;
-    document.getElementById('pending-properties').textContent = stats.pendingProperties;
-    document.getElementById('total-users').textContent = stats.totalUsers;
-    document.getElementById('active-listings').textContent = stats.approvedProperties;
+    
+    // Анимируем счетчики
+    setTimeout(() => {
+        animateCounter(document.getElementById('total-properties'), stats.totalProperties);
+        animateCounter(document.getElementById('pending-properties'), stats.pendingProperties);
+        animateCounter(document.getElementById('total-users'), stats.totalUsers);
+        animateCounter(document.getElementById('active-listings'), stats.approvedProperties);
+    }, 500);
+}
+
+// Анимация счетчиков
+function animateCounter(element, target, duration = 2000) {
+    let start = 0;
+    const increment = target / (duration / 16);
+    const timer = setInterval(() => {
+        start += increment;
+        if (start >= target) {
+            element.textContent = target.toLocaleString();
+            clearInterval(timer);
+        } else {
+            element.textContent = Math.floor(start).toLocaleString();
+        }
+    }, 16);
 }
 
 // Модерация для админа
@@ -561,7 +662,7 @@ function showAdminModeration() {
     
     if (pendingProperties.length === 0) {
         container.innerHTML = `
-            <div class="property-card text-center">
+            <div class="property-card text-center" style="grid-column: 1 / -1;">
                 <div style="font-size: 4rem; color: #e5e7eb; margin-bottom: 1rem;">✅</div>
                 <h3>Нет заявок на модерацию</h3>
                 <p>Все заявки проверены и обработаны.</p>
@@ -684,7 +785,7 @@ function filterProperties() {
     
     if (properties.length === 0) {
         container.innerHTML = `
-            <div class="property-card text-center">
+            <div class="property-card text-center" style="grid-column: 1 / -1;">
                 <div style="font-size: 4rem; color: #e5e7eb; margin-bottom: 1rem;">🔍</div>
                 <h3>Ничего не найдено</h3>
                 <p>Попробуйте изменить параметры поиска или сбросить фильтры</p>
@@ -758,7 +859,7 @@ function openPropertyModal(propertyId) {
     incrementPropertyViews(propertyId);
     
     document.getElementById('modal-content').innerHTML = `
-        <h2>${property.title}</h2>
+        <h2 class="gradient-text">${property.title}</h2>
         <div style="position: relative;">
             <img src="${property.images[0]}" alt="${property.title}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 12px; margin: 1rem 0;" onerror="this.src='https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=400&fit=crop'">
             <span class="property-badge status-approved" style="position: absolute; top: 1rem; right: 1rem;">Одобрено</span>
@@ -906,36 +1007,30 @@ function showNotification(message, type) {
     notification.className = `notification ${type}`;
     notification.innerHTML = `
         <div class="notification-content">
-            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-            <span>${message}</span>
+            <div style="width: 40px; height: 40px; border-radius: 50%; background: ${
+                type === 'success' ? 'var(--gradient-secondary)' : 'var(--danger)'
+            }; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-${type === 'success' ? 'check' : 'exclamation'}" style="color: white;"></i>
+            </div>
+            <div>
+                <div style="font-weight: 700; color: var(--dark); margin-bottom: 0.25rem;">
+                    ${type === 'success' ? 'Успешно!' : 'Ошибка!'}
+                </div>
+                <div style="color: var(--gray);">${message}</div>
+            </div>
         </div>
-    `;
-    
-    // Добавляем стили
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${type === 'success' ? '#10b981' : '#ef4444'};
-        color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 12px;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        z-index: 10000;
-        animation: slideInRight 0.3s ease;
-        max-width: 400px;
     `;
     
     document.body.appendChild(notification);
     
     // Удаляем через 5 секунд
     setTimeout(() => {
-        notification.style.animation = 'slideOutRight 0.3s ease';
+        notification.style.animation = 'slideOutRight 0.5s ease forwards';
         setTimeout(() => {
             if (notification.parentNode) {
                 notification.parentNode.removeChild(notification);
             }
-        }, 300);
+        }, 500);
     }, 5000);
 }
 
@@ -950,12 +1045,6 @@ style.textContent = `
     @keyframes slideOutRight {
         from { transform: translateX(0); opacity: 1; }
         to { transform: translateX(100%); opacity: 0; }
-    }
-    
-    .notification-content {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
     }
 `;
 document.head.appendChild(style);
