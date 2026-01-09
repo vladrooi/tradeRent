@@ -1,934 +1,1179 @@
-let currentUser = null;
-let currentPropertyModal = null;
-let currentReviewRating = 0;
-let currentRejectPropertyId = null;
-
-// Инициализация при загрузке
-document.addEventListener('DOMContentLoaded', function() {
-    initializeDatabase();
-    populateCityFilters();
-    checkAuth();
-    setupEventListeners();
-});
-
-// Настройка обработчиков событий
-function setupEventListeners() {
-    document.getElementById('login-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        login();
-    });
-    
-    document.getElementById('register-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        register();
-    });
-    
-    document.getElementById('add-property-form').addEventListener('submit', function(e) {
-        e.preventDefault();
-        addNewProperty();
-    });
-}
-
-// Заполнение фильтров городов
-function populateCityFilters() {
-    const cities = getCities();
-    const cityFilter = document.getElementById('city-filter');
-    const propertyCity = document.getElementById('property-city');
-    const moderationCity = document.getElementById('moderation-city');
-    
-    cities.forEach(city => {
-        cityFilter.innerHTML += `<option value="${city}">${city}</option>`;
-        propertyCity.innerHTML += `<option value="${city}">${city}</option>`;
-        moderationCity.innerHTML += `<option value="${city}">${city}</option>`;
-    });
-}
-
-// Показать секцию
-function showSection(sectionName) {
-    // Скрыть все секции
-    document.querySelectorAll('.section').forEach(section => {
-        section.classList.remove('active');
-    });
-    
-    // Показать нужную секцию
-    document.getElementById(sectionName + '-section').classList.add('active');
-    
-    // Загрузить данные для секции
-    switch(sectionName) {
-        case 'properties':
-            showProperties();
-            break;
-        case 'cities':
-            showCities();
-            break;
-        case 'profile':
-            showProfile();
-            break;
-        case 'my-properties':
-            showMyProperties();
-            break;
-        case 'admin-panel':
-            showAdminPanel();
-            break;
-        case 'admin-moderation':
-            showAdminModeration();
-            break;
-    }
-}
-
-// Авторизация
-function login() {
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
-    
-    const user = findUser(username, password);
-    
-    if (user) {
-        setCurrentUser(user);
-        currentUser = user;
-        showInterface();
-        document.getElementById('login-form').reset();
-    } else {
-        alert('Неверные данные для входа!');
-    }
-}
-
-function register() {
-    const username = document.getElementById('reg-username').value;
-    const password = document.getElementById('reg-password').value;
-    const name = document.getElementById('reg-name').value;
-    const email = document.getElementById('reg-email').value;
-    const phone = document.getElementById('reg-phone').value;
-    const role = document.getElementById('reg-role').value;
-    
-    try {
-        const userData = {
-            username,
-            password,
-            role,
-            name,
-            email,
-            phone
+// Основное приложение
+class TradeSpaceApp {
+    constructor() {
+        this.state = {
+            currentUser: db.currentUser,
+            currentFilter: 'all',
+            currentCity: '',
+            currentSort: 'newest',
+            currentPage: 1,
+            itemsPerPage: 8,
+            favorites: new Set(),
+            notifications: [],
+            searchQuery: '',
+            activeModal: null,
+            isLoading: false
         };
-        
-        const newUser = registerUser(userData);
-        setCurrentUser(newUser);
-        currentUser = newUser;
-        showInterface();
-        document.getElementById('register-form').reset();
-        alert('Регистрация успешна!');
-        
-    } catch (error) {
-        alert(error.message);
+
+        this.init();
     }
-}
 
-function checkAuth() {
-    const user = getCurrentUser();
-    if (user) {
-        currentUser = user;
-        showInterface();
-    } else {
-        showGuestInterface();
+    // Инициализация приложения
+    init() {
+        this.cacheElements();
+        this.setupEventListeners();
+        this.setupIntersectionObserver();
+        this.updateUI();
+        this.loadProperties();
+        this.animateStats();
+        this.setupSmoothScrolling();
     }
-}
 
-function showGuestInterface() {
-    document.getElementById('guest-nav').style.display = 'flex';
-    document.getElementById('main-nav').style.display = 'none';
-    showSection('hero');
-}
+    // Кэширование элементов
+    cacheElements() {
+        this.elements = {
+            // Кнопка поддержки
+            supportFab: document.getElementById('supportFab'),
+            supportPopup: document.getElementById('supportPopup'),
+            closeSupport: document.querySelector('.close-popup'),
 
-function showInterface() {
-    document.getElementById('guest-nav').style.display = 'none';
-    document.getElementById('main-nav').style.display = 'flex';
-    
-    const navAvatar = document.getElementById('nav-avatar');
-    navAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
-    
-    // Показываем соответствующие разделы для ролей
-    if (currentUser.role === 'admin') {
-        document.getElementById('admin-nav').style.display = 'inline';
-        showAdminPanel();
-    } else if (currentUser.role === 'landlord') {
-        document.getElementById('landlord-nav').style.display = 'inline';
-        showSection('properties');
-    } else {
-        showSection('properties');
+            // Навигация
+            authBtn: document.getElementById('authBtn'),
+            authText: document.getElementById('authText'),
+            addListingBtn: document.getElementById('addListingBtn'),
+            mobileMenuBtn: document.getElementById('mobileMenuBtn'),
+
+            // Поиск
+            searchBtn: document.getElementById('searchBtn'),
+            searchInput: document.getElementById('searchInput'),
+            citySelect: document.getElementById('citySelect'),
+            propertyType: document.getElementById('propertyType'),
+            areaSelect: document.getElementById('areaSelect'),
+            priceSelect: document.getElementById('priceSelect'),
+
+            // Каталог
+            propertiesGrid: document.getElementById('propertiesGrid'),
+            catalogSort: document.getElementById('catalogSort'),
+            filterTags: document.getElementById('filterTags'),
+            advancedFilterBtn: document.getElementById('advancedFilterBtn'),
+            pagination: document.getElementById('pagination'),
+
+            // Категории
+            categoryTags: document.querySelectorAll('.category-tag'),
+
+            // Города
+            cityCards: document.querySelectorAll('.city-card'),
+            cityItems: document.querySelectorAll('.city-item'),
+
+            // Модальные окна
+            modals: document.querySelectorAll('.modal'),
+            modalOverlay: document.getElementById('modalOverlay'),
+            modalCloseBtns: document.querySelectorAll('.modal-close'),
+
+            // Формы
+            loginForm: document.getElementById('loginForm'),
+            registerForm: document.getElementById('registerForm'),
+            addListingForm: document.getElementById('addListingForm'),
+
+            // Вкладки
+            authTabs: document.querySelectorAll('.auth-tab'),
+            profileTabs: document.querySelectorAll('.profile-tab'),
+            adminTabs: document.querySelectorAll('.admin-tab')
+        };
     }
-}
 
-function logout() {
-    logoutUser();
-    currentUser = null;
-    location.reload();
-}
+    // Настройка обработчиков событий
+    setupEventListeners() {
+        // Кнопка поддержки
+        this.elements.supportFab.addEventListener('click', () => {
+            this.toggleSupportPopup();
+        });
 
-// Отображение площадок
-function showProperties() {
-    const properties = getApprovedProperties();
-    const container = document.getElementById('properties-list');
-    
-    if (properties.length === 0) {
-        container.innerHTML = '<div class="property-card"><h3>Нет доступных площадок</h3><p>Станьте первым арендодателем!</p></div>';
-        return;
-    }
-    
-    container.innerHTML = properties.map(property => {
-        const owner = getUserById(property.ownerId);
-        return `
-            <div class="property-card" onclick="openPropertyModal(${property.id})">
-                <img src="${property.images[0]}" alt="${property.title}" class="property-image">
-                <h3 class="property-title">${property.title}</h3>
-                <p class="property-description">${property.description.substring(0, 100)}...</p>
-                <div class="property-details">
-                    <div class="detail-item">
-                        <i class="fas fa-ruler-combined"></i>
-                        <span>${property.area} м²</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>${property.city}</span>
-                    </div>
-                </div>
-                <div class="price">$${property.price}/месяц</div>
-                <div class="owner-info">
-                    <div class="owner-avatar">${owner.name.charAt(0)}</div>
-                    <div class="owner-details">
-                        <div class="owner-name">${owner.name}</div>
-                        <div class="owner-rating">
-                            <span class="stars">${'★'.repeat(Math.floor(owner.rating))}${'☆'.repeat(5 - Math.floor(owner.rating))}</span>
-                            ${owner.rating}
-                        </div>
-                    </div>
-                </div>
-                <button class="btn btn-primary contact-btn" onclick="event.stopPropagation(); openPropertyModal(${property.id})">
-                    <i class="fas fa-info-circle"></i> Подробнее
-                </button>
-            </div>
-        `;
-    }).join('');
-}
+        this.elements.closeSupport.addEventListener('click', () => {
+            this.hideSupportPopup();
+        });
 
-// Показ городов
-function showCities() {
-    const cities = getCities();
-    const container = document.getElementById('cities-list');
-    
-    container.innerHTML = cities.map(city => {
-        const propertiesCount = getCityPropertiesCount(city);
-        const hasProperties = propertiesCount > 0;
-        const icons = ['🏙️', '🏛️', '🌉', '🏰', '🌃', '🎡'];
-        
-        return `
-            <div class="city-card" onclick="showCityProperties('${city}')">
-                <div class="city-icon">${icons[cities.indexOf(city)]}</div>
-                <h3 class="city-name">${city}</h3>
-                <p class="city-properties ${hasProperties ? 'has-properties' : 'no-properties'}">
-                    ${hasProperties ? 
-                        `✅ ${propertiesCount} площадок в аренду` : 
-                        '❌ Нет доступных площадок'
-                    }
-                </p>
-            </div>
-        `;
-    }).join('');
-}
+        // Поиск
+        this.elements.searchBtn.addEventListener('click', () => {
+            this.handleSearch();
+        });
 
-function showCityProperties(city) {
-    const properties = getPropertiesByCity(city);
-    const container = document.getElementById('properties-list');
-    
-    if (properties.length === 0) {
-        container.innerHTML = `
-            <div class="property-card">
-                <h3>${city}</h3>
-                <p>В этом городе пока нет доступных торговых площадей.</p>
-                ${currentUser && currentUser.role === 'landlord' ? 
-                    '<p>Станьте первым арендодателем в этом городе!</p>' : 
-                    ''
+        this.elements.searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.handleSearch();
+        });
+
+        // Фильтры
+        this.elements.citySelect.addEventListener('change', () => {
+            this.updateFilters();
+        });
+
+        this.elements.propertyType.addEventListener('change', () => {
+            this.updateFilters();
+        });
+
+        this.elements.catalogSort.addEventListener('change', () => {
+            this.state.currentSort = this.elements.catalogSort.value;
+            this.loadProperties();
+        });
+
+        // Категории
+        this.elements.categoryTags.forEach(tag => {
+            tag.addEventListener('click', (e) => {
+                e.preventDefault();
+                const type = tag.dataset.type;
+                this.filterByType(type);
+            });
+        });
+
+        // Города
+        this.elements.cityCards.forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (!e.target.closest('.btn')) {
+                    const city = card.dataset.city;
+                    this.filterByCity(city);
                 }
+            });
+        });
+
+        this.elements.cityItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const city = item.dataset.city;
+                this.filterByCity(city);
+            });
+        });
+
+        // Кнопка добавления объявления
+        this.elements.addListingBtn.addEventListener('click', () => {
+            if (!this.state.currentUser) {
+                this.showAuthModal();
+                this.showNotification('Для добавления объявления необходимо авторизоваться', 'warning');
+                return;
+            }
+            this.showAddListingModal();
+        });
+
+        // Кнопка авторизации
+        this.elements.authBtn.addEventListener('click', () => {
+            if (this.state.currentUser) {
+                this.showProfileModal();
+            } else {
+                this.showAuthModal();
+            }
+        });
+
+        // Мобильное меню
+        this.elements.mobileMenuBtn.addEventListener('click', () => {
+            this.toggleMobileMenu();
+        });
+
+        // Модальные окна
+        this.elements.modalOverlay.addEventListener('click', () => {
+            this.hideModal();
+        });
+
+        this.elements.modalCloseBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.hideModal();
+            });
+        });
+
+        // Форма входа
+        if (this.elements.loginForm) {
+            this.elements.loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleLogin();
+            });
+        }
+
+        // Форма регистрации
+        if (this.elements.registerForm) {
+            this.elements.registerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.handleRegister();
+            });
+        }
+
+        // Форма добавления объявления
+        if (this.elements.addListingForm) {
+            this.setupListingForm();
+        }
+
+        // Вкладки авторизации
+        this.elements.authTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.dataset.tab;
+                this.switchAuthTab(tabId);
+            });
+        });
+
+        // Клик вне всплывающего окна поддержки
+        document.addEventListener('click', (e) => {
+            if (!this.elements.supportPopup.contains(e.target) && 
+                !this.elements.supportFab.contains(e.target)) {
+                this.hideSupportPopup();
+            }
+        });
+
+        // Обработка шагов формы
+        document.querySelectorAll('[data-next]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const nextStep = e.target.dataset.next;
+                this.goToFormStep(nextStep);
+            });
+        });
+
+        document.querySelectorAll('[data-prev]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const prevStep = e.target.dataset.prev;
+                this.goToFormStep(prevStep);
+            });
+        });
+
+        // Показать/скрыть пароль
+        document.querySelectorAll('.toggle-password').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const input = e.target.closest('.password-input').querySelector('input');
+                const icon = e.target.querySelector('i');
+                
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    icon.className = 'fas fa-eye-slash';
+                } else {
+                    input.type = 'password';
+                    icon.className = 'fas fa-eye';
+                }
+            });
+        });
+    }
+
+    // Настройка Intersection Observer для анимаций
+    setupIntersectionObserver() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate__animated', 'animate__fadeInUp');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        // Наблюдаем за карточками
+        document.querySelectorAll('.property-card, .city-card, .service-card').forEach(card => {
+            observer.observe(card);
+        });
+    }
+
+    // Настройка плавной прокрутки
+    setupSmoothScrolling() {
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    const headerHeight = document.querySelector('.header').offsetHeight;
+                    const targetPosition = targetElement.offsetTop - headerHeight - 20;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    }
+
+    // Обработка поиска
+    handleSearch() {
+        const query = this.elements.searchInput.value.trim();
+        const city = this.elements.citySelect.value;
+        const type = this.elements.propertyType.value;
+        const area = this.elements.areaSelect.value;
+        const price = this.elements.priceSelect.value;
+
+        if (!this.state.currentUser && (query || city || type || area || price)) {
+            this.showAuthModal();
+            this.showNotification('Для поиска необходимо авторизоваться', 'warning');
+            return;
+        }
+
+        this.state.searchQuery = query;
+        this.state.currentCity = city;
+        this.state.currentFilter = type || 'all';
+        this.state.currentPage = 1;
+
+        // Обновляем фильтры
+        this.updateFilterTags();
+
+        // Загружаем свойства
+        this.loadProperties();
+
+        // Прокручиваем к каталогу
+        document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Обновление фильтров
+    updateFilters() {
+        this.state.currentPage = 1;
+        this.loadProperties();
+    }
+
+    // Фильтрация по типу
+    filterByType(type) {
+        this.state.currentFilter = type;
+        this.state.currentPage = 1;
+        this.elements.propertyType.value = type;
+        this.loadProperties();
+        document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Фильтрация по городу
+    filterByCity(city) {
+        this.state.currentCity = city;
+        this.state.currentPage = 1;
+        this.elements.citySelect.value = city;
+        this.loadProperties();
+        document.getElementById('catalog').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Обновление тегов фильтров
+    updateFilterTags() {
+        const tags = [];
+        
+        if (this.state.currentCity) {
+            const cityName = db.getCityName(this.state.currentCity);
+            tags.push(`Город: ${cityName}`);
+        }
+        
+        if (this.state.currentFilter && this.state.currentFilter !== 'all') {
+            const typeName = db.getPropertyTypeName(this.state.currentFilter);
+            tags.push(`Тип: ${typeName}`);
+        }
+        
+        if (this.elements.areaSelect.value) {
+            const area = this.elements.areaSelect.options[this.elements.areaSelect.selectedIndex].text;
+            tags.push(`Площадь: ${area}`);
+        }
+        
+        if (this.elements.priceSelect.value) {
+            const price = this.elements.priceSelect.options[this.elements.priceSelect.selectedIndex].text;
+            tags.push(`Цена: ${price}`);
+        }
+        
+        if (this.state.searchQuery) {
+            tags.push(`Поиск: "${this.state.searchQuery}"`);
+        }
+        
+        this.elements.filterTags.innerHTML = tags.map(tag => `
+            <div class="filter-tag">
+                <span>${tag}</span>
+                <span class="remove">&times;</span>
             </div>
-        `;
-    } else {
-        container.innerHTML = properties.map(property => {
-            const owner = getUserById(property.ownerId);
-            return `
-                <div class="property-card" onclick="openPropertyModal(${property.id})">
-                    <img src="${property.images[0]}" alt="${property.title}" class="property-image">
-                    <h3 class="property-title">${property.title}</h3>
-                    <p class="property-description">${property.description.substring(0, 100)}...</p>
-                    <div class="property-details">
-                        <div class="detail-item">
-                            <i class="fas fa-ruler-combined"></i>
-                            <span>${property.area} м²</span>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>${property.city}</span>
-                        </div>
-                    </div>
-                    <div class="price">$${property.price}/месяц</div>
-                    <div class="owner-info">
-                        <div class="owner-avatar">${owner.name.charAt(0)}</div>
-                        <div class="owner-details">
-                            <div class="owner-name">${owner.name}</div>
-                            <div class="owner-rating">
-                                <span class="stars">${'★'.repeat(Math.floor(owner.rating))}${'☆'.repeat(5 - Math.floor(owner.rating))}</span>
-                                ${owner.rating}
-                            </div>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary contact-btn" onclick="event.stopPropagation(); openPropertyModal(${property.id})">
-                        <i class="fas fa-info-circle"></i> Подробнее
+        `).join('');
+        
+        // Обработчики для удаления тегов
+        this.elements.filterTags.querySelectorAll('.remove').forEach((removeBtn, index) => {
+            removeBtn.addEventListener('click', () => {
+                this.removeFilterTag(index, tags[index]);
+            });
+        });
+    }
+
+    // Удаление тега фильтра
+    removeFilterTag(index, tagText) {
+        if (tagText.startsWith('Город:')) {
+            this.state.currentCity = '';
+            this.elements.citySelect.value = '';
+        } else if (tagText.startsWith('Тип:')) {
+            this.state.currentFilter = 'all';
+            this.elements.propertyType.value = '';
+        } else if (tagText.startsWith('Площадь:')) {
+            this.elements.areaSelect.value = '';
+        } else if (tagText.startsWith('Цена:')) {
+            this.elements.priceSelect.value = '';
+        } else if (tagText.startsWith('Поиск:')) {
+            this.state.searchQuery = '';
+            this.elements.searchInput.value = '';
+        }
+        
+        this.state.currentPage = 1;
+        this.loadProperties();
+    }
+
+    // Загрузка и отображение свойств
+    loadProperties() {
+        this.setLoading(true);
+        
+        // Имитация загрузки
+        setTimeout(() => {
+            let properties = db.getAvailableProperties();
+            
+            // Применяем фильтры
+            if (this.state.currentCity) {
+                properties = properties.filter(p => p.city === this.state.currentCity);
+            }
+            
+            if (this.state.currentFilter && this.state.currentFilter !== 'all') {
+                properties = properties.filter(p => p.type === this.state.currentFilter);
+            }
+            
+            if (this.state.searchQuery) {
+                const query = this.state.searchQuery.toLowerCase();
+                properties = properties.filter(p => 
+                    p.title.toLowerCase().includes(query) ||
+                    p.description.toLowerCase().includes(query) ||
+                    p.address.toLowerCase().includes(query)
+                );
+            }
+            
+            // Сортируем
+            properties = db.sortProperties(properties, this.state.currentSort);
+            
+            // Отображаем
+            this.displayProperties(properties);
+            this.updatePagination(properties.length);
+            this.updateFilterTags();
+            this.setLoading(false);
+        }, 500);
+    }
+
+    // Отображение свойств
+    displayProperties(properties) {
+        const start = (this.state.currentPage - 1) * this.state.itemsPerPage;
+        const end = start + this.state.itemsPerPage;
+        const pageProperties = properties.slice(start, end);
+        
+        if (pageProperties.length === 0) {
+            this.elements.propertiesGrid.innerHTML = `
+                <div class="no-results" style="grid-column: 1/-1; text-align: center; padding: 60px;">
+                    <i class="fas fa-search" style="font-size: 60px; color: var(--primary); margin-bottom: 20px;"></i>
+                    <h3 style="margin-bottom: 15px;">Объекты не найдены</h3>
+                    <p style="color: var(--gray-600); margin-bottom: 20px;">Попробуйте изменить параметры поиска</p>
+                    <button class="btn btn-outline" id="clearAllFilters">
+                        <i class="fas fa-times"></i> Сбросить все фильтры
                     </button>
                 </div>
             `;
-        }).join('');
-    }
-    
-    showSection('properties');
-}
-
-// Профиль пользователя
-function showProfile() {
-    const profileName = document.getElementById('profile-name');
-    const profileRole = document.getElementById('profile-role');
-    const profileEmail = document.getElementById('profile-email');
-    const profilePhone = document.getElementById('profile-phone');
-    const profileRating = document.getElementById('profile-rating');
-    const profileAvatar = document.getElementById('profile-avatar');
-    
-    profileName.textContent = currentUser.name;
-    profileRole.textContent = getRoleName(currentUser.role);
-    profileEmail.textContent = currentUser.email;
-    profilePhone.textContent = currentUser.phone;
-    profileRating.textContent = currentUser.rating;
-    profileAvatar.textContent = currentUser.name.charAt(0).toUpperCase();
-}
-
-function getRoleName(role) {
-    const roles = {
-        'admin': 'Администратор',
-        'landlord': 'Арендодатель',
-        'user': 'Пользователь'
-    };
-    return roles[role] || role;
-}
-
-// Мои площадки
-function showMyProperties() {
-    if (!currentUser || currentUser.role !== 'landlord') return;
-    
-    const properties = getUserProperties(currentUser.id);
-    const container = document.getElementById('my-properties-list');
-    
-    if (properties.length === 0) {
-        container.innerHTML = '<div class="property-card"><h3>У вас нет площадок</h3><p>Добавьте первую площадку!</p></div>';
-        return;
-    }
-    
-    container.innerHTML = properties.map(property => {
-        const statusText = property.status === 'approved' ? 'Одобрено' : 
-                          property.status === 'pending' ? 'На модерации' : 'Отклонено';
-        const statusClass = property.status === 'approved' ? 'status-approved' : 
-                           property.status === 'pending' ? 'status-pending' : 'status-rejected';
-        
-        return `
-            <div class="property-card">
-                <img src="${property.images[0]}" alt="${property.title}" class="property-image">
-                <h3 class="property-title">${property.title} 
-                    <span class="property-status ${statusClass}">${statusText}</span>
-                </h3>
-                <p class="property-description">${property.description}</p>
-                <div class="property-details">
-                    <div class="detail-item">
-                        <i class="fas fa-ruler-combined"></i>
-                        <span>${property.area} м²</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>${property.city}</span>
-                    </div>
-                </div>
-                <div class="price">$${property.price}/месяц</div>
-                <p><strong>Адрес:</strong> ${property.address}</p>
-                ${property.rejectReason ? `<p style="color: #ef4444; margin-top: 0.5rem;"><strong>Причина отклонения:</strong> ${property.rejectReason}</p>` : ''}
-                <button class="btn btn-primary contact-btn" onclick="openPropertyModal(${property.id})">
-                    <i class="fas fa-info-circle"></i> Подробнее
-                </button>
-            </div>
-        `;
-    }).join('');
-}
-
-// Добавление новой площадки
-function addNewProperty() {
-    if (!currentUser || currentUser.role !== 'landlord') return;
-    
-    const title = document.getElementById('title').value;
-    const description = document.getElementById('description').value;
-    const area = parseInt(document.getElementById('area').value);
-    const price = parseInt(document.getElementById('price').value);
-    const city = document.getElementById('property-city').value;
-    const address = document.getElementById('address').value;
-    const imageUrl = document.getElementById('image-url').value;
-    
-    const newProperty = {
-        title,
-        description,
-        area,
-        price,
-        city,
-        address,
-        images: [imageUrl],
-        features: ["Базовые удобства"],
-        ownerId: currentUser.id,
-        ownerName: currentUser.name
-    };
-    
-    addProperty(newProperty);
-    document.getElementById('add-property-form').reset();
-    alert('Площадка отправлена на модерацию!');
-    showSection('my-properties');
-}
-
-// Фильтрация
-function filterProperties() {
-    const query = document.getElementById('search-input').value.toLowerCase();
-    const city = document.getElementById('city-filter').value;
-    const maxArea = document.getElementById('area-filter').value;
-    
-    let properties = getApprovedProperties();
-    
-    if (query) {
-        properties = properties.filter(prop => 
-            prop.title.toLowerCase().includes(query) ||
-            prop.description.toLowerCase().includes(query)
-        );
-    }
-    
-    if (city) {
-        properties = properties.filter(prop => prop.city === city);
-    }
-    
-    if (maxArea) {
-        properties = properties.filter(prop => prop.area <= parseInt(maxArea));
-    }
-    
-    const container = document.getElementById('properties-list');
-    
-    if (properties.length === 0) {
-        container.innerHTML = '<div class="property-card"><h3>Ничего не найдено</h3><p>Попробуйте изменить параметры поиска</p></div>';
-        return;
-    }
-    
-    container.innerHTML = properties.map(property => {
-        const owner = getUserById(property.ownerId);
-        return `
-            <div class="property-card" onclick="openPropertyModal(${property.id})">
-                <img src="${property.images[0]}" alt="${property.title}" class="property-image">
-                <h3 class="property-title">${property.title}</h3>
-                <p class="property-description">${property.description.substring(0, 100)}...</p>
-                <div class="property-details">
-                    <div class="detail-item">
-                        <i class="fas fa-ruler-combined"></i>
-                        <span>${property.area} м²</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>${property.city}</span>
-                    </div>
-                </div>
-                <div class="price">$${property.price}/месяц</div>
-                <div class="owner-info">
-                    <div class="owner-avatar">${owner.name.charAt(0)}</div>
-                    <div class="owner-details">
-                        <div class="owner-name">${owner.name}</div>
-                        <div class="owner-rating">
-                            <span class="stars">${'★'.repeat(Math.floor(owner.rating))}${'☆'.repeat(5 - Math.floor(owner.rating))}</span>
-                            ${owner.rating}
-                        </div>
-                    </div>
-                </div>
-                <button class="btn btn-primary contact-btn" onclick="event.stopPropagation(); openPropertyModal(${property.id})">
-                    <i class="fas fa-info-circle"></i> Подробнее
-                </button>
-            </div>
-        `;
-    }).join('');
-}
-
-// Админ-панель
-function showAdminPanel() {
-    if (!currentUser || currentUser.role !== 'admin') return;
-    
-    const stats = getAdminStats();
-    
-    document.getElementById('total-properties').textContent = stats.totalProperties;
-    document.getElementById('pending-properties').textContent = stats.pendingProperties;
-    document.getElementById('total-users').textContent = stats.totalUsers;
-    document.getElementById('total-reviews').textContent = stats.totalReviews;
-    
-    showSection('admin-panel');
-}
-
-function showAdminModeration() {
-    if (!currentUser || currentUser.role !== 'admin') return;
-    
-    const pendingProperties = getPendingProperties();
-    const container = document.getElementById('moderation-list');
-    
-    if (pendingProperties.length === 0) {
-        container.innerHTML = `
-            <div class="property-card" style="grid-column: 1 / -1; text-align: center;">
-                <h3>🎉 Отличная работа!</h3>
-                <p>Нет заявок, ожидающих модерации</p>
-            </div>
-        `;
-        return;
-    }
-    
-    container.innerHTML = pendingProperties.map(property => {
-        const owner = getUserById(property.ownerId);
-        return `
-            <div class="property-card">
-                <img src="${property.images[0]}" alt="${property.title}" class="property-image">
-                <h3 class="property-title">${property.title}</h3>
-                <p class="property-description">${property.description.substring(0, 100)}...</p>
-                
-                <div class="property-details">
-                    <div class="detail-item">
-                        <i class="fas fa-ruler-combined"></i>
-                        <span>${property.area} м²</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-dollar-sign"></i>
-                        <span>$${property.price}/мес</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>${property.city}</span>
-                    </div>
-                </div>
-                
-                <div class="owner-info">
-                    <div class="owner-avatar">${owner.name.charAt(0)}</div>
-                    <div class="owner-details">
-                        <div class="owner-name">${owner.name}</div>
-                        <div>${owner.phone}</div>
-                    </div>
-                </div>
-                
-                <div class="moderation-actions">
-                    <button class="btn btn-success" onclick="approveProperty(${property.id})">
-                        <i class="fas fa-check"></i> Одобрить
-                    </button>
-                    <button class="btn btn-danger" onclick="openRejectModal(${property.id})">
-                        <i class="fas fa-times"></i> Отклонить
-                    </button>
-                    <button class="btn btn-secondary" onclick="openPropertyModal(${property.id})">
-                        <i class="fas fa-eye"></i> Просмотр
-                    </button>
-                </div>
-                
-                <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
-                    <small style="color: #6b7280;">
-                        <i class="fas fa-clock"></i> Подана: ${new Date(property.createdAt).toLocaleDateString()}
-                    </small>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function filterModeration() {
-    const query = document.getElementById('moderation-search').value.toLowerCase();
-    const city = document.getElementById('moderation-city').value;
-    
-    let properties = getPendingProperties();
-    
-    if (query) {
-        properties = properties.filter(prop => 
-            prop.title.toLowerCase().includes(query) ||
-            prop.description.toLowerCase().includes(query) ||
-            prop.ownerName.toLowerCase().includes(query)
-        );
-    }
-    
-    if (city) {
-        properties = properties.filter(prop => prop.city === city);
-    }
-    
-    const container = document.getElementById('moderation-list');
-    
-    if (properties.length === 0) {
-        container.innerHTML = `
-            <div class="property-card" style="grid-column: 1 / -1; text-align: center;">
-                <h3>Ничего не найдено</h3>
-                <p>Попробуйте изменить параметры поиска</p>
-            </div>
-        `;
-        return;
-    }
-    
-    container.innerHTML = properties.map(property => {
-        const owner = getUserById(property.ownerId);
-        return `
-            <div class="property-card">
-                <img src="${property.images[0]}" alt="${property.title}" class="property-image">
-                <h3 class="property-title">${property.title}</h3>
-                <p class="property-description">${property.description.substring(0, 100)}...</p>
-                
-                <div class="property-details">
-                    <div class="detail-item">
-                        <i class="fas fa-ruler-combined"></i>
-                        <span>${property.area} м²</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-dollar-sign"></i>
-                        <span>$${property.price}/мес</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>${property.city}</span>
-                    </div>
-                </div>
-                
-                <div class="owner-info">
-                    <div class="owner-avatar">${owner.name.charAt(0)}</div>
-                    <div class="owner-details">
-                        <div class="owner-name">${owner.name}</div>
-                        <div>${owner.phone}</div>
-                    </div>
-                </div>
-                
-                <div class="moderation-actions">
-                    <button class="btn btn-success" onclick="approveProperty(${property.id})">
-                        <i class="fas fa-check"></i> Одобрить
-                    </button>
-                    <button class="btn btn-danger" onclick="openRejectModal(${property.id})">
-                        <i class="fas fa-times"></i> Отклонить
-                    </button>
-                    <button class="btn btn-secondary" onclick="openPropertyModal(${property.id})">
-                        <i class="fas fa-eye"></i> Просмотр
-                    </button>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function approveProperty(propertyId) {
-    if (confirm('Вы уверены, что хотите одобрить эту площадку?')) {
-        if (updatePropertyStatus(propertyId, 'approved')) {
-            alert('Площадка одобрена!');
-            showAdminModeration();
-        }
-    }
-}
-
-function openRejectModal(propertyId) {
-    currentRejectPropertyId = propertyId;
-    document.getElementById('reject-modal').style.display = 'block';
-}
-
-function closeRejectModal() {
-    document.getElementById('reject-modal').style.display = 'none';
-    currentRejectPropertyId = null;
-    document.getElementById('reject-reason').value = '';
-}
-
-function submitRejection() {
-    const reason = document.getElementById('reject-reason').value;
-    if (!reason.trim()) {
-        alert('Пожалуйста, укажите причину отклонения');
-        return;
-    }
-    
-    if (updatePropertyStatus(currentRejectPropertyId, 'rejected', reason.trim())) {
-        alert('Площадка отклонена!');
-        closeRejectModal();
-        showAdminModeration();
-    }
-}
-
-function showAllUsers() {
-    alert('Функция управления пользователями в разработке');
-}
-
-function showAllProperties() {
-    showSection('properties');
-}
-
-// Модальные окна
-function openPropertyModal(propertyId) {
-    const property = getAllProperties().find(p => p.id === propertyId);
-    if (!property) return;
-    
-    const owner = getUserById(property.ownerId);
-    const reviews = getReviewsForUser(property.ownerId);
-    
-    const isAdmin = currentUser && currentUser.role === 'admin';
-    const isOwner = currentUser && currentUser.id === property.ownerId;
-    
-    const adminActions = isAdmin ? `
-        <div class="admin-actions-modal">
-            <h4 style="color: #1f2937; margin-bottom: 1rem;">Действия администратора</h4>
-            <div style="display: flex; gap: 0.5rem;">
-                ${property.status === 'pending' ? `
-                    <button class="btn btn-success" onclick="approveProperty(${property.id}); closeModal();">
-                        <i class="fas fa-check"></i> Одобрить
-                    </button>
-                    <button class="btn btn-danger" onclick="openRejectModal(${property.id}); closeModal();">
-                        <i class="fas fa-times"></i> Отклонить
-                    </button>
-                ` : ''}
-                <button class="btn btn-danger" onclick="deletePropertyFromModal(${property.id})">
-                    <i class="fas fa-trash"></i> Удалить
-                </button>
-            </div>
-        </div>
-    ` : '';
-    
-    const ownerActions = isOwner ? `
-        <div class="admin-actions-modal">
-            <h4 style="color: #1f2937; margin-bottom: 1rem;">Ваши действия</h4>
-            <div style="display: flex; gap: 0.5rem;">
-                <button class="btn btn-danger" onclick="deletePropertyFromModal(${property.id})">
-                    <i class="fas fa-trash"></i> Удалить мою площадку
-                </button>
-            </div>
-        </div>
-    ` : '';
-
-    const modalContent = `
-        <h2>${property.title}</h2>
-        <img src="${property.images[0]}" alt="${property.title}" style="width: 100%; height: 300px; object-fit: cover; border-radius: 10px; margin: 1rem 0;">
-        
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;">
-            <div>
-                <h3 style="color: #1f2937; margin-bottom: 1rem;">Информация о площади</h3>
-                <div class="property-details">
-                    <div class="detail-item">
-                        <i class="fas fa-ruler-combined"></i>
-                        <span>Площадь: ${property.area} м²</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-dollar-sign"></i>
-                        <span>Цена: $${property.price}/мес</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <span>Город: ${property.city}</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-home"></i>
-                        <span>Адрес: ${property.address}</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="fas fa-info-circle"></i>
-                        <span>Статус: 
-                            <span class="property-status ${property.status === 'approved' ? 'status-approved' : property.status === 'pending' ? 'status-pending' : 'status-rejected'}">
-                                ${property.status === 'approved' ? 'Одобрено' : property.status === 'pending' ? 'На модерации' : 'Отклонено'}
-                            </span>
-                        </span>
-                    </div>
-                </div>
-                
-                <h4 style="color: #1f2937; margin: 1.5rem 0 1rem;">Описание</h4>
-                <p style="color: #6b7280; line-height: 1.6;">${property.description}</p>
-                
-                <h4 style="color: #1f2937; margin: 1.5rem 0 1rem;">Особенности</h4>
-                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-                    ${property.features.map(feature => `
-                        <span style="background: #4f46e5; color: white; padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem;">
-                            <i class="fas fa-check"></i> ${feature}
-                        </span>
-                    `).join('')}
-                </div>
-            </div>
             
-            <div>
-                <h3 style="color: #1f2937; margin-bottom: 1rem;">Контактная информация</h3>
-                <div class="owner-info" style="background: #f8fafc; padding: 1.5rem; border-radius: 10px;">
-                    <div class="owner-avatar">${owner.name.charAt(0)}</div>
-                    <div class="owner-details">
-                        <div class="owner-name">${owner.name}</div>
-                        <div class="owner-rating">
-                            <span class="stars">${'★'.repeat(Math.floor(owner.rating))}${'☆'.repeat(5 - Math.floor(owner.rating))}</span>
-                            (${owner.rating})
+            document.getElementById('clearAllFilters')?.addEventListener('click', () => {
+                this.clearAllFilters();
+            });
+            
+            return;
+        }
+        
+        this.elements.propertiesGrid.innerHTML = pageProperties.map(property => {
+            const isFavorite = db.isFavorite(property.id);
+            const cityName = db.getCityName(property.city);
+            const typeName = db.getPropertyTypeName(property.type);
+            
+            return `
+                <div class="property-card" data-id="${property.id}">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="${property.title}">
+                        <div class="property-badge">${cityName}</div>
+                        <div class="property-favorite ${isFavorite ? 'active' : ''}" data-id="${property.id}">
+                            <i class="fas fa-heart"></i>
                         </div>
-                        <div style="margin-top: 0.5rem;">
-                            <div><i class="fas fa-phone"></i> ${owner.phone}</div>
-                            <div><i class="fas fa-envelope"></i> ${owner.email}</div>
+                    </div>
+                    <div class="property-content">
+                        <span class="property-category">${typeName}</span>
+                        <h3 class="property-title">${property.title}</h3>
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${property.address}</span>
+                        </div>
+                        <div class="property-features">
+                            <div class="property-feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>${property.area} м²</span>
+                            </div>
+                            <div class="property-feature">
+                                <i class="fas fa-eye"></i>
+                                <span>${property.views}</span>
+                            </div>
+                        </div>
+                        <div class="property-price">
+                            ${property.price.toLocaleString()} BYN <span>/ месяц</span>
+                        </div>
+                        <div class="property-actions">
+                            <button class="btn btn-outline details-btn" data-id="${property.id}">
+                                <i class="fas fa-info-circle"></i> Подробнее
+                            </button>
+                            <button class="btn btn-primary contact-btn" data-id="${property.id}">
+                                <i class="fas fa-phone"></i> Контакты
+                            </button>
                         </div>
                     </div>
                 </div>
-                
-                <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="contactOwner('${owner.phone}', '${owner.email}')">
-                    <i class="fas fa-phone"></i> Связаться с арендодателем
-                </button>
-                
-                ${currentUser && currentUser.id !== owner.id ? `
-                    <button class="btn btn-secondary" style="width: 100%; margin-top: 0.5rem;" onclick="openReviewModal(${owner.id})">
-                        <i class="fas fa-star"></i> Оставить отзыв
-                    </button>
-                ` : ''}
-            </div>
-        </div>
+            `;
+        }).join('');
         
-        ${property.rejectReason ? `
-            <div style="background: #fee2e2; padding: 1rem; border-radius: 10px; margin: 1rem 0;">
-                <h4 style="color: #dc2626; margin-bottom: 0.5rem;"><i class="fas fa-exclamation-triangle"></i> Причина отклонения</h4>
-                <p style="color: #7f1d1d;">${property.rejectReason}</p>
-            </div>
-        ` : ''}
-        
-        <div class="reviews-section">
-            <h3 style="color: #1f2937; margin-bottom: 1rem;">Отзывы об арендодателе</h3>
-            ${reviews.length > 0 ? reviews.map(review => `
-                <div class="review-card">
-                    <div class="review-header">
-                        <div class="owner-avatar" style="width: 35px; height: 35px; font-size: 0.8rem;">${review.authorName.charAt(0)}</div>
-                        <div>
-                            <div style="font-weight: 600;">${review.authorName}</div>
-                            <div class="stars">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
-                        </div>
-                        <div style="color: #6b7280; font-size: 0.9rem; margin-left: auto;">
-                            ${new Date(review.createdAt).toLocaleDateString()}
-                        </div>
-                    </div>
-                    <p style="color: #374151; margin-top: 0.5rem;">${review.comment}</p>
-                </div>
-            `).join('') : `
-                <p style="color: #6b7280; text-align: center; padding: 2rem;">Пока нет отзывов</p>
-            `}
-        </div>
-        
-        ${adminActions}
-        ${ownerActions}
-    `;
-    
-    document.getElementById('modal-content').innerHTML = modalContent;
-    document.getElementById('property-modal').style.display = 'block';
-    currentPropertyModal = property;
-}
+        // Настройка обработчиков
+        this.setupPropertyCardListeners();
+    }
 
-function deletePropertyFromModal(propertyId) {
-    if (confirm('Вы уверены, что хотите удалить эту площадку? Это действие нельзя отменить.')) {
-        if (deleteProperty(propertyId)) {
-            alert('Площадка удалена!');
-            closeModal();
-            if (currentUser.role === 'admin') {
-                showAdminModeration();
-            } else {
-                showMyProperties();
+    // Настройка обработчиков для карточек свойств
+    setupPropertyCardListeners() {
+        // Кнопка "Подробнее"
+        document.querySelectorAll('.details-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const propertyId = parseInt(btn.dataset.id);
+                this.showPropertyDetails(propertyId);
+            });
+        });
+        
+        // Кнопка "Контакты"
+        document.querySelectorAll('.contact-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const propertyId = parseInt(btn.dataset.id);
+                this.showContactModal(propertyId);
+            });
+        });
+        
+        // Кнопка избранного
+        document.querySelectorAll('.property-favorite').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                const propertyId = parseInt(btn.dataset.id);
+                
+                if (!this.state.currentUser) {
+                    this.showAuthModal();
+                    this.showNotification('Для добавления в избранное необходимо авторизоваться', 'warning');
+                    return;
+                }
+                
+                const success = db.toggleFavorite(propertyId);
+                if (success) {
+                    btn.classList.toggle('active');
+                    const isFavorite = btn.classList.contains('active');
+                    const message = isFavorite ? 'Добавлено в избранное' : 'Удалено из избранного';
+                    this.showNotification(message, 'success');
+                }
+            });
+        });
+        
+        // Клик по карточке
+        document.querySelectorAll('.property-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                if (!e.target.closest('.property-favorite') && 
+                    !e.target.closest('.details-btn') && 
+                    !e.target.closest('.contact-btn')) {
+                    const propertyId = parseInt(card.dataset.id);
+                    this.showPropertyDetails(propertyId);
+                }
+            });
+        });
+    }
+
+    // Обновление пагинации
+    updatePagination(totalItems) {
+        const totalPages = Math.ceil(totalItems / this.state.itemsPerPage);
+        
+        if (totalPages <= 1) {
+            this.elements.pagination.innerHTML = '';
+            return;
+        }
+        
+        let paginationHTML = '';
+        
+        // Кнопка "Назад"
+        if (this.state.currentPage > 1) {
+            paginationHTML += `
+                <button class="page-btn prev-btn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            `;
+        }
+        
+        // Номера страниц
+        for (let i = 1; i <= totalPages; i++) {
+            if (i === 1 || i === totalPages || 
+                (i >= this.state.currentPage - 1 && i <= this.state.currentPage + 1)) {
+                paginationHTML += `
+                    <button class="page-number ${i === this.state.currentPage ? 'active' : ''}" data-page="${i}">
+                        ${i}
+                    </button>
+                `;
+            } else if (i === this.state.currentPage - 2 || i === this.state.currentPage + 2) {
+                paginationHTML += `<span class="page-dots">...</span>`;
             }
         }
-    }
-}
-
-function contactOwner(phone, email) {
-    if (confirm(`Хотите связаться с арендодателем?\nТелефон: ${phone}\nEmail: ${email}\n\nНажмите OK для копирования номера телефона`)) {
-        navigator.clipboard.writeText(phone).then(() => {
-            alert('Номер телефона скопирован в буфер обмена!');
-        }).catch(() => {
-            alert(`Телефон: ${phone}\nEmail: ${email}`);
+        
+        // Кнопка "Вперед"
+        if (this.state.currentPage < totalPages) {
+            paginationHTML += `
+                <button class="page-btn next-btn">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+        }
+        
+        this.elements.pagination.innerHTML = paginationHTML;
+        
+        // Обработчики пагинации
+        this.elements.pagination.querySelector('.prev-btn')?.addEventListener('click', () => {
+            this.state.currentPage--;
+            this.loadProperties();
+        });
+        
+        this.elements.pagination.querySelector('.next-btn')?.addEventListener('click', () => {
+            this.state.currentPage++;
+            this.loadProperties();
+        });
+        
+        this.elements.pagination.querySelectorAll('.page-number').forEach(btn => {
+            btn.addEventListener('click', () => {
+                this.state.currentPage = parseInt(btn.dataset.page);
+                this.loadProperties();
+            });
         });
     }
-}
 
-function openReviewModal(ownerId) {
-    const modalContent = `
-        <h2>Оставить отзыв</h2>
-        <form onsubmit="submitReview(${ownerId}); return false;">
-            <div class="form-group">
-                <label>Ваша оценка:</label>
-                <div class="star-rating" style="display: flex; gap: 0.5rem; margin: 1rem 0; justify-content: center;">
-                    ${[1,2,3,4,5].map(star => `
-                        <i class="fas fa-star" style="font-size: 2rem; color: #ddd; cursor: pointer;" 
-                           onclick="setReviewRating(${star})" 
-                           id="star-${star}"></i>
-                    `).join('')}
+    // Сброс всех фильтров
+    clearAllFilters() {
+        this.state.currentFilter = 'all';
+        this.state.currentCity = '';
+        this.state.searchQuery = '';
+        this.state.currentPage = 1;
+        
+        this.elements.citySelect.value = '';
+        this.elements.propertyType.value = '';
+        this.elements.areaSelect.value = '';
+        this.elements.priceSelect.value = '';
+        this.elements.searchInput.value = '';
+        
+        this.loadProperties();
+    }
+
+    // Показать детали объекта
+    showPropertyDetails(propertyId) {
+        const property = db.getPropertyById(propertyId);
+        if (!property) return;
+        
+        const cityName = db.getCityName(property.city);
+        const typeName = db.getPropertyTypeName(property.type);
+        const featuresHTML = property.features.map(feature => `<li>${feature}</li>`).join('');
+        
+        const detailsHTML = `
+            <div class="property-details">
+                <div class="property-gallery">
+                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="${property.title}">
+                </div>
+                <div class="property-info">
+                    <div class="property-header">
+                        <div class="property-meta">
+                            <span class="property-category">${typeName}</span>
+                            <span class="property-city">${cityName}</span>
+                        </div>
+                        <h2>${property.title}</h2>
+                        <div class="property-stats">
+                            <span><i class="fas fa-eye"></i> ${property.views} просмотров</span>
+                            <span><i class="fas fa-heart"></i> ${property.favorites} в избранном</span>
+                            <span><i class="fas fa-calendar"></i> ${property.createdAt}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="property-specs">
+                        <div class="spec-row">
+                            <div class="spec-item">
+                                <i class="fas fa-ruler-combined"></i>
+                                <div>
+                                    <span>Площадь</span>
+                                    <strong>${property.area} м²</strong>
+                                </div>
+                            </div>
+                            <div class="spec-item">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <div>
+                                    <span>Цена аренды</span>
+                                    <strong>${property.price.toLocaleString()} BYN/месяц</strong>
+                                </div>
+                            </div>
+                            <div class="spec-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div>
+                                    <span>Адрес</span>
+                                    <strong>${property.address}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="property-description">
+                        <h3>Описание</h3>
+                        <p>${property.description}</p>
+                    </div>
+                    
+                    <div class="property-features">
+                        <h3>Особенности</h3>
+                        <ul>${featuresHTML}</ul>
+                    </div>
+                    
+                    <div class="property-contact">
+                        <h3>Контактная информация</h3>
+                        <div class="contact-details">
+                            <div class="contact-item">
+                                <i class="fas fa-user"></i>
+                                <div>
+                                    <span>Контактное лицо</span>
+                                    <strong>${property.contact.name}</strong>
+                                </div>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <div>
+                                    <span>Телефон</span>
+                                    <strong>${property.contact.phone}</strong>
+                                </div>
+                            </div>
+                            ${property.contact.email ? `
+                                <div class="contact-item">
+                                    <i class="fas fa-envelope"></i>
+                                    <div>
+                                        <span>Email</span>
+                                        <strong>${property.contact.email}</strong>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                    
+                    <div class="property-actions">
+                        <button class="btn btn-primary btn-block" id="callOwner">
+                            <i class="fas fa-phone"></i> Позвонить владельцу
+                        </button>
+                        <button class="btn btn-outline btn-block" id="saveProperty">
+                            <i class="fas fa-heart"></i> Добавить в избранное
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="form-group">
-                <label>Комментарий:</label>
-                <textarea id="review-comment" rows="4" placeholder="Расскажите о вашем опыте сотрудничества..." required style="width: 100%; padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 10px;"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary" style="width: 100%;">Отправить отзыв</button>
-        </form>
-    `;
-    
-    document.getElementById('review-modal-content').innerHTML = modalContent;
-    document.getElementById('review-modal').style.display = 'block';
-    currentReviewRating = 0;
-}
-
-function setReviewRating(rating) {
-    currentReviewRating = rating;
-    for (let i = 1; i <= 5; i++) {
-        const star = document.getElementById(`star-${i}`);
-        if (star) {
-            star.style.color = i <= rating ? '#f59e0b' : '#ddd';
-        }
-    }
-}
-
-function submitReview(ownerId) {
-    if (!currentReviewRating) {
-        alert('Пожалуйста, поставьте оценку');
-        return;
-    }
-    
-    const comment = document.getElementById('review-comment').value;
-    if (!comment.trim()) {
-        alert('Пожалуйста, напишите комментарий');
-        return;
-    }
-    
-    try {
-        addReview({
-            authorId: currentUser.id,
-            authorName: currentUser.name,
-            targetUserId: ownerId,
-            rating: currentReviewRating,
-            comment: comment.trim()
+        `;
+        
+        document.getElementById('propertyDetails').innerHTML = detailsHTML;
+        this.showModal('propertyModal');
+        
+        // Обработчики в модальном окне
+        document.getElementById('callOwner')?.addEventListener('click', () => {
+            window.open(`tel:${property.contact.phone.replace(/\D/g, '')}`);
         });
         
-        alert('Спасибо за ваш отзыв!');
-        closeReviewModal();
+        document.getElementById('saveProperty')?.addEventListener('click', () => {
+            if (!this.state.currentUser) {
+                this.hideModal();
+                this.showAuthModal();
+                return;
+            }
+            
+            const success = db.toggleFavorite(propertyId);
+            if (success) {
+                const isFavorite = db.isFavorite(propertyId);
+                const message = isFavorite ? 'Добавлено в избранное' : 'Удалено из избранного';
+                this.showNotification(message, 'success');
+                
+                // Обновляем кнопку
+                const btn = document.getElementById('saveProperty');
+                btn.innerHTML = isFavorite ? 
+                    '<i class="fas fa-heart"></i> В избранном' :
+                    '<i class="fas fa-heart"></i> Добавить в избранное';
+            }
+        });
+    }
+
+    // Показать контакты
+    showContactModal(propertyId) {
+        const property = db.getPropertyById(propertyId);
+        if (!property) return;
         
-        if (currentPropertyModal) {
-            openPropertyModal(currentPropertyModal.id);
+        const contactHTML = `
+            <div class="contact-modal">
+                <h3><i class="fas fa-phone-alt"></i> Контактная информация</h3>
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <i class="fas fa-user-tie"></i>
+                        <div>
+                            <span>Контактное лицо</span>
+                            <strong>${property.contact.name}</strong>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <span>Телефон</span>
+                            <strong>${property.contact.phone}</strong>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <span>Адрес объекта</span>
+                            <strong>${property.address}</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-actions">
+                    <button class="btn btn-primary" id="callOwnerBtn">
+                        <i class="fas fa-phone"></i> Позвонить
+                    </button>
+                    <button class="btn btn-outline" id="copyPhoneBtn">
+                        <i class="fas fa-copy"></i> Скопировать номер
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('propertyDetails').innerHTML = contactHTML;
+        this.showModal('propertyModal');
+        
+        // Обработчики
+        document.getElementById('callOwnerBtn')?.addEventListener('click', () => {
+            window.open(`tel:${property.contact.phone.replace(/\D/g, '')}`);
+        });
+        
+        document.getElementById('copyPhoneBtn')?.addEventListener('click', () => {
+            navigator.clipboard.writeText(property.contact.phone)
+                .then(() => this.showNotification('Номер скопирован в буфер обмена', 'success'))
+                .catch(() => this.showNotification('Не удалось скопировать номер', 'error'));
+        });
+    }
+
+    // Обработка входа
+    async handleLogin() {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        if (!email || !password) {
+            this.showNotification('Заполните все поля', 'error');
+            return;
         }
         
-    } catch (error) {
-        alert(error.message);
+        const result = db.login(email, password);
+        
+        if (result.success) {
+            this.state.currentUser = result.user;
+            this.updateUI();
+            this.hideModal();
+            this.showNotification('Вход выполнен успешно!', 'success');
+        } else {
+            this.showNotification(result.message, 'error');
+        }
+    }
+
+    // Обработка регистрации
+    async handleRegister() {
+        const name = document.getElementById('registerName').value;
+        const email = document.getElementById('registerEmail').value;
+        const phone = document.getElementById('registerPhone').value;
+        const password = document.getElementById('registerPassword').value;
+        const confirmPassword = document.getElementById('registerConfirm').value;
+        const userType = document.getElementById('userType').value;
+        
+        // Валидация
+        if (!name || !email || !phone || !password || !confirmPassword || !userType) {
+            this.showNotification('Заполните все поля', 'error');
+            return;
+        }
+        
+        if (password !== confirmPassword) {
+            this.showNotification('Пароли не совпадают', 'error');
+            return;
+        }
+        
+        if (password.length < 6) {
+            this.showNotification('Пароль должен содержать минимум 6 символов', 'error');
+            return;
+        }
+        
+        // Регистрация
+        const result = db.register({
+            name,
+            email,
+            password,
+            phone,
+            userType
+        });
+        
+        if (result.success) {
+            this.state.currentUser = result.user;
+            this.updateUI();
+            this.hideModal();
+            this.showNotification('Регистрация прошла успешно!', 'success');
+        } else {
+            this.showNotification(result.message, 'error');
+        }
+    }
+
+    // Выход из системы
+    logout() {
+        db.logout();
+        this.state.currentUser = null;
+        this.updateUI();
+        this.hideModal();
+        this.showNotification('Вы успешно вышли из системы', 'success');
+    }
+
+    // Обновление интерфейса
+    updateUI() {
+        // Обновление текста кнопки авторизации
+        if (this.state.currentUser) {
+            this.elements.authText.textContent = this.state.currentUser.name.split(' ')[0];
+        } else {
+            this.elements.authText.textContent = 'Войти';
+        }
+        
+        // Обновление избранного
+        this.updateFavorites();
+    }
+
+    // Обновление избранного
+    updateFavorites() {
+        // Можно добавить отображение количества избранного
+    }
+
+    // Анимация статистики
+    animateStats() {
+        const counters = document.querySelectorAll('.stat-number');
+        
+        counters.forEach(counter => {
+            const target = parseInt(counter.dataset.count);
+            const increment = target / 100;
+            let current = 0;
+            
+            const updateCounter = () => {
+                if (current < target) {
+                    current += increment;
+                    if (current > target) current = target;
+                    counter.textContent = Math.floor(current);
+                    setTimeout(updateCounter, 20);
+                } else {
+                    counter.textContent = target;
+                }
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        updateCounter();
+                        observer.unobserve(entry.target);
+                    }
+                });
+            });
+            
+            observer.observe(counter);
+        });
+    }
+
+    // Настройка формы добавления объявления
+    setupListingForm() {
+        const form = this.elements.addListingForm;
+        
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            this.handleAddListing();
+        });
+    }
+
+    // Обработка добавления объявления
+    async handleAddListing() {
+        // Сбор данных из формы
+        const formData = {
+            title: document.getElementById('listingTitle').value,
+            type: document.getElementById('listingType').value,
+            city: document.getElementById('listingCity').value,
+            address: document.getElementById('listingAddress').value,
+            area: parseInt(document.getElementById('listingArea').value),
+            price: parseInt(document.getElementById('listingPrice').value),
+            description: document.getElementById('listingDescription').value,
+            contact: {
+                name: document.getElementById('listingContact').value,
+                phone: document.getElementById('listingPhone').value,
+                email: document.getElementById('listingEmail').value || ''
+            },
+            features: Array.from(document.querySelectorAll('input[name="features"]:checked')).map(cb => cb.value)
+        };
+        
+        // Валидация
+        if (!formData.title || !formData.type || !formData.city || !formData.address || 
+            !formData.area || !formData.price || !formData.description || 
+            !formData.contact.name || !formData.contact.phone) {
+            this.showNotification('Заполните все обязательные поля', 'error');
+            return;
+        }
+        
+        // Добавление объявления
+        const newProperty = db.addProperty(formData);
+        
+        this.hideModal();
+        this.showNotification('Объявление успешно добавлено!', 'success');
+        
+        // Обновляем список
+        this.loadProperties();
+        
+        // Сбрасываем форму
+        this.elements.addListingForm.reset();
+        this.goToFormStep(1);
+    }
+
+    // Переключение шагов формы
+    goToFormStep(step) {
+        document.querySelectorAll('.form-step').forEach(step => {
+            step.classList.remove('active');
+        });
+        
+        document.querySelector(`.form-step[data-step="${step}"]`).classList.add('active');
+    }
+
+    // Переключение вкладок авторизации
+    switchAuthTab(tabId) {
+        // Скрыть все вкладки
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.remove('active');
+        });
+        
+        // Убрать активный класс у всех кнопок
+        this.elements.authTabs.forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // Показать выбранную вкладку
+        document.getElementById(`${tabId}Tab`).classList.add('active');
+        document.querySelector(`.auth-tab[data-tab="${tabId}"]`).classList.add('active');
+    }
+
+    // Показать модальное окно авторизации
+    showAuthModal() {
+        this.showModal('authModal');
+    }
+
+    // Показать модальное окно профиля
+    showProfileModal() {
+        if (!this.state.currentUser) return;
+        
+        // Заполняем информацию профиля
+        document.getElementById('profileName').textContent = this.state.currentUser.name;
+        document.getElementById('profileEmail').textContent = this.state.currentUser.email;
+        document.getElementById('profileType').textContent = 
+            this.state.currentUser.role === 'admin' ? 'Администратор' :
+            this.state.currentUser.role === 'landlord' ? 'Арендодатель' : 'Арендатор';
+        
+        // Показываем вкладку админа только для администраторов
+        const adminTab = document.getElementById('adminTab');
+        if (this.state.currentUser.role === 'admin') {
+            adminTab.style.display = 'block';
+        } else {
+            adminTab.style.display = 'none';
+        }
+        
+        this.showModal('profileModal');
+    }
+
+    // Показать модальное окно добавления объявления
+    showAddListingModal() {
+        this.showModal('addListingModal');
+    }
+
+    // Показать модальное окно
+    showModal(modalId) {
+        const modal = document.getElementById(modalId);
+        this.elements.modalOverlay.classList.add('active');
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        this.state.activeModal = modalId;
+    }
+
+    // Скрыть модальное окно
+    hideModal() {
+        this.elements.modalOverlay.classList.remove('active');
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.classList.remove('active');
+        });
+        document.body.style.overflow = 'auto';
+        this.state.activeModal = null;
+    }
+
+    // Переключить всплывающее окно поддержки
+    toggleSupportPopup() {
+        this.elements.supportPopup.classList.toggle('active');
+    }
+
+    // Скрыть всплывающее окно поддержки
+    hideSupportPopup() {
+        this.elements.supportPopup.classList.remove('active');
+    }
+
+    // Переключить мобильное меню
+    toggleMobileMenu() {
+        document.querySelector('.nav-menu').classList.toggle('active');
+    }
+
+    // Показать уведомление
+    showNotification(message, type = 'info') {
+        const container = document.getElementById('notificationContainer');
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.innerHTML = `
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        `;
+        
+        container.appendChild(notification);
+        
+        // Автоматическое удаление через 3 секунды
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
+    }
+
+    // Установить состояние загрузки
+    setLoading(isLoading) {
+        this.state.isLoading = isLoading;
+        if (isLoading) {
+            this.elements.propertiesGrid.innerHTML = `
+                <div class="loading" style="grid-column: 1/-1; text-align: center; padding: 60px;">
+                    <div class="spinner"></div>
+                    <p>Загрузка объектов...</p>
+                </div>
+            `;
+        }
     }
 }
 
-function closeModal() {
-    document.getElementById('property-modal').style.display = 'none';
-    currentPropertyModal = null;
-}
-
-function closeReviewModal() {
-    document.getElementById('review-modal').style.display = 'none';
-    currentReviewRating = 0;
-}
-
-// Закрытие модальных окон при клике вне их
-window.onclick = function(event) {
-    const modals = ['property-modal', 'review-modal', 'reject-modal'];
-    modals.forEach(modalId => {
-        const modal = document.getElementById(modalId);
-        if (event.target === modal) {
-            if (modalId === 'property-modal') closeModal();
-            if (modalId === 'review-modal') closeReviewModal();
-            if (modalId === 'reject-modal') closeRejectModal();
+// Добавляем стили для уведомлений
+const notificationStyles = document.createElement('style');
+notificationStyles.textContent = `
+    @keyframes slideOut {
+        from {
+            transform: translateX(0);
+            opacity: 1;
         }
-    });
-}
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
+    
+    .notification {
+        font-family: var(--font-secondary);
+        font-weight: 500;
+    }
+`;
+document.head.appendChild(notificationStyles);
 
+// Инициализация приложения при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    window.app = new TradeSpaceApp();
+});
