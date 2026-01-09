@@ -3,918 +3,1422 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Аренда торговых площадей в Беларуси | TradeSpace.BY</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>TradeRent | Аренда торговых площадей</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Кнопка поддержки -->
-    <div class="support-fab" id="supportFab">
-        <div class="support-icon">
-            <i class="fas fa-headset"></i>
-        </div>
-        <div class="support-tooltip">Нужна помощь?</div>
+    <!-- Анимированный фон -->
+    <div class="animated-bg">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
     </div>
-
-    <!-- Всплывающая карточка поддержки -->
-    <div class="support-popup" id="supportPopup">
-        <div class="popup-header">
-            <h3><i class="fas fa-headset"></i> Поддержка клиентов</h3>
-            <button class="close-popup">&times;</button>
-        </div>
-        <div class="popup-body">
-            <div class="support-agent">
-                <div class="agent-avatar">
-                    <img src="https://ui-avatars.com/api/?name=Владислав+Амброжевич&background=4A90E2&color=fff" alt="Владислав">
-                </div>
-                <div class="agent-info">
-                    <h4>Владислав Амброжевич</h4>
-                    <p class="agent-title">Менеджер по аренде</p>
-                    <div class="agent-contact">
-                        <i class="fas fa-phone-alt"></i>
-                        <a href="tel:+375295260995">+375 (29) 526-09-95</a>
-                    </div>
-                    <div class="agent-contact">
-                        <i class="fab fa-telegram"></i>
-                        <a href="https://t.me/VladislavAmbrozhevich" target="_blank">Telegram</a>
-                    </div>
-                    <div class="agent-status">
-                        <span class="status-dot online"></span>
-                        <span>Онлайн</span>
-                    </div>
-                </div>
-            </div>
-            <div class="support-buttons">
-                <button class="btn btn-call" onclick="window.open('tel:+375295260995')">
-                    <i class="fas fa-phone"></i> Позвонить
-                </button>
-                <button class="btn btn-telegram" onclick="window.open('https://t.me/VladislavAmbrozhevich', '_blank')">
-                    <i class="fab fa-telegram"></i> Написать в Telegram
-                </button>
-            </div>
-        </div>
+    
+    <!-- Волны анимации -->
+    <div class="waves">
+        <div class="wave wave-1"></div>
+        <div class="wave wave-2"></div>
+        <div class="wave wave-3"></div>
     </div>
-
-    <!-- Header -->
-    <header class="header">
-        <nav class="navbar">
-            <div class="container">
-                <div class="nav-content">
-                    <div class="logo">
-                        <i class="fas fa-store"></i>
-                        <span>TradeSpace<span class="by">.BY</span></span>
+    
+    <!-- Прогресс бар скролла -->
+    <div class="scroll-progress"></div>
+    
+    <div class="app-container">
+        <!-- Хедер с неон-эффектом -->
+        <header class="neon-header">
+            <div class="header-content">
+                <div class="logo-container">
+                    <div class="logo" onclick="showSection('hero')">
+                        <i class="fas fa-store logo-icon"></i>
+                        <div class="logo-text">
+                            <span class="logo-main">Trade</span>
+                            <span class="logo-accent">Rent</span>
+                        </div>
+                        <div class="logo-pulse"></div>
+                        <div class="logo-ring"></div>
+                    </div>
+                </div>
+                
+                <!-- Навигация с эффектом стекла -->
+                <nav class="glass-nav" id="guest-nav">
+                    <div class="nav-items">
+                        <a class="nav-link" onclick="showSection('hero')" data-text="Главная">
+                            <i class="fas fa-home"></i>
+                            <span>Главная</span>
+                            <div class="nav-underline"></div>
+                        </a>
+                        <a class="nav-link" onclick="showSection('properties')" data-text="Площадки">
+                            <i class="fas fa-building"></i>
+                            <span>Площадки</span>
+                            <div class="nav-underline"></div>
+                        </a>
+                        <a class="nav-link" onclick="showSection('cities')" data-text="Города">
+                            <i class="fas fa-city"></i>
+                            <span>Города</span>
+                            <div class="nav-underline"></div>
+                        </a>
+                        <a class="nav-link" onclick="showSection('about')" data-text="О нас">
+                            <i class="fas fa-info-circle"></i>
+                            <span>О нас</span>
+                            <div class="nav-underline"></div>
+                        </a>
                     </div>
                     
-                    <div class="nav-menu">
-                        <ul class="nav-links">
-                            <li><a href="#home" class="nav-link active"><i class="fas fa-home"></i> Главная</a></li>
-                            <li><a href="#catalog" class="nav-link"><i class="fas fa-th-large"></i> Каталог</a></li>
-                            <li><a href="#cities" class="nav-link"><i class="fas fa-city"></i> Города</a></li>
-                            <li><a href="#services" class="nav-link"><i class="fas fa-concierge-bell"></i> Услуги</a></li>
-                            <li><a href="#about" class="nav-link"><i class="fas fa-info-circle"></i> О нас</a></li>
-                        </ul>
+                    <div class="auth-buttons">
+                        <button class="btn btn-glass btn-sparkle" onclick="showSection('login')">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Войти</span>
+                            <div class="btn-shine"></div>
+                        </button>
+                        <button class="btn btn-primary btn-glow" onclick="showSection('register')">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Регистрация</span>
+                            <div class="btn-glow-effect"></div>
+                        </button>
                     </div>
+                </nav>
 
-                    <div class="nav-actions">
-                        <div class="user-section">
-                            <button class="btn-auth" id="authBtn">
-                                <i class="fas fa-user"></i>
-                                <span id="authText">Войти</span>
+                <!-- Навигация для авторизованных -->
+                <nav class="glass-nav" id="main-nav" style="display: none;">
+                    <div class="nav-items">
+                        <a class="nav-link" onclick="showSection('hero')" data-text="Главная">
+                            <i class="fas fa-home"></i>
+                            <span>Главная</span>
+                            <div class="nav-underline"></div>
+                        </a>
+                        <a class="nav-link" onclick="showSection('properties')" data-text="Площадки">
+                            <i class="fas fa-building"></i>
+                            <span>Площадки</span>
+                            <div class="nav-underline"></div>
+                        </a>
+                        
+                        <span id="user-nav" style="display: none;">
+                            <a class="nav-link" onclick="showSection('my-properties')" data-text="Мои площадки">
+                                <i class="fas fa-store-alt"></i>
+                                <span>Мои площадки</span>
+                                <div class="nav-underline"></div>
+                            </a>
+                            <a class="nav-link" onclick="showSection('add-property')" data-text="Добавить">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Добавить</span>
+                                <div class="nav-underline"></div>
+                            </a>
+                        </span>
+                        
+                        <span id="admin-nav" style="display: none;">
+                            <a class="nav-link" onclick="showSection('admin-panel')" data-text="Админ">
+                                <i class="fas fa-crown"></i>
+                                <span>Админ</span>
+                                <div class="nav-underline"></div>
+                            </a>
+                            <a class="nav-link" onclick="showSection('admin-moderation')" data-text="Модерация">
+                                <i class="fas fa-shield-alt"></i>
+                                <span>Модерация</span>
+                                <span id="moderation-badge" class="notification-badge"></span>
+                                <div class="nav-underline"></div>
+                            </a>
+                            <a class="nav-link" onclick="showSection('database-management')" data-text="База данных">
+                                <i class="fas fa-database"></i>
+                                <span>База данных</span>
+                                <div class="nav-underline"></div>
+                            </a>
+                        </span>
+                        
+                        <a class="nav-link" onclick="showSection('cities')" data-text="Города">
+                            <i class="fas fa-city"></i>
+                            <span>Города</span>
+                            <div class="nav-underline"></div>
+                        </a>
+                        <a class="nav-link" onclick="showSection('about')" data-text="О нас">
+                            <i class="fas fa-info-circle"></i>
+                            <span>О нас</span>
+                            <div class="nav-underline"></div>
+                        </a>
+                    </div>
+                    
+                    <div class="user-info">
+                        <div class="user-avatar-container" onclick="showSection('profile')">
+                            <div id="nav-avatar" class="user-avatar neon-avatar">
+                                <div class="avatar-pulse"></div>
+                            </div>
+                            <div class="avatar-ring"></div>
+                            <div class="avatar-sparkles">
+                                <div class="sparkle"></div>
+                                <div class="sparkle"></div>
+                                <div class="sparkle"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="user-dropdown">
+                            <div id="user-name" class="user-name"></div>
+                            <div class="dropdown-content glass-dropdown">
+                                <a onclick="showSection('profile')" class="dropdown-item">
+                                    <i class="fas fa-user"></i>
+                                    <span>Профиль</span>
+                                    <div class="dropdown-arrow">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </div>
+                                </a>
+                                <span id="user-dropdown-nav" style="display: none;">
+                                    <a onclick="showSection('my-properties')" class="dropdown-item">
+                                        <i class="fas fa-store-alt"></i>
+                                        <span>Мои площадки</span>
+                                        <div class="dropdown-arrow">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </div>
+                                    </a>
+                                    <a onclick="showSection('reviews-received')" class="dropdown-item">
+                                        <i class="fas fa-star"></i>
+                                        <span>Мои отзывы</span>
+                                        <div class="dropdown-arrow">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </div>
+                                    </a>
+                                </span>
+                                <div class="dropdown-divider"></div>
+                                <a onclick="logout()" class="dropdown-item logout-item">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                    <span>Выйти</span>
+                                    <div class="dropdown-arrow">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </header>
+
+        <!-- Основной контент -->
+        <main class="main-content">
+            <!-- Герой секция -->
+            <section id="hero-section" class="section active">
+                <div class="hero-container">
+                    <div class="hero-content">
+                        <div class="hero-text">
+                            <div class="hero-badge">
+                                <span class="badge-text">ПРЕМИУМ КЛАСС</span>
+                                <div class="badge-glow"></div>
+                            </div>
+                            <h1 class="hero-title">
+                                <span class="title-line">Найдите идеальную</span>
+                                <span class="title-line highlight-text">
+                                    <span class="text-shimmer">торговую площадь</span>
+                                </span>
+                            </h1>
+                            <p class="hero-subtitle">
+                                Более <span class="accent-text" data-count="1250" id="total-properties-count">0</span> площадок по всей Беларуси для вашего бизнеса. 
+                                Быстрый поиск, безопасные сделки, лучшие цены.
+                            </p>
+                            <div class="hero-actions">
+                                <button class="btn btn-primary btn-hero btn-pulse" onclick="showSection('properties')">
+                                    <i class="fas fa-search"></i>
+                                    <span>Начать поиск</span>
+                                    <div class="btn-sparkle-container">
+                                        <div class="sparkle"></div>
+                                        <div class="sparkle"></div>
+                                        <div class="sparkle"></div>
+                                    </div>
+                                </button>
+                                <button class="btn btn-glass btn-hero" onclick="currentUser ? showSection('add-property') : showAuthPrompt()">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Добавить площадку</span>
+                                    <div class="btn-hover-effect"></div>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="hero-visual">
+                            <div class="visual-container">
+                                <div class="floating-card card-1">
+                                    <div class="card-content">
+                                        <div class="card-icon">
+                                            <i class="fas fa-store"></i>
+                                            <div class="icon-ring"></div>
+                                        </div>
+                                        <h3>Торговый центр</h3>
+                                    </div>
+                                    <div class="card-glow"></div>
+                                </div>
+                                <div class="floating-card card-2">
+                                    <div class="card-content">
+                                        <div class="card-icon">
+                                            <i class="fas fa-shopping-bag"></i>
+                                            <div class="icon-ring"></div>
+                                        </div>
+                                        <h3>Бутик</h3>
+                                    </div>
+                                    <div class="card-glow"></div>
+                                </div>
+                                <div class="floating-card card-3">
+                                    <div class="card-content">
+                                        <div class="card-icon">
+                                            <i class="fas fa-coffee"></i>
+                                            <div class="icon-ring"></div>
+                                        </div>
+                                        <h3>Кафе</h3>
+                                    </div>
+                                    <div class="card-glow"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-stats glass-stats">
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-building"></i>
+                                <div class="icon-glow"></div>
+                            </div>
+                            <div class="stat-data">
+                                <div class="stat-number" data-count="1250" id="hero-total-properties">0</div>
+                                <div class="stat-label">Торговых площадей</div>
+                            </div>
+                            <div class="stat-line"></div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                                <div class="icon-glow"></div>
+                            </div>
+                            <div class="stat-data">
+                                <div class="stat-number" data-count="98" id="hero-happy-clients">0</div>
+                                <div class="stat-label">Довольных клиентов</div>
+                            </div>
+                            <div class="stat-line"></div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-headset"></i>
+                                <div class="icon-glow"></div>
+                            </div>
+                            <div class="stat-data">
+                                <div class="stat-number">24/7</div>
+                                <div class="stat-label">Поддержка</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Преимущества -->
+                <div class="features-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span class="title-decor">//</span>
+                            <span class="title-shimmer">Почему выбирают нас</span>
+                            <span class="title-decor">//</span>
+                        </h2>
+                        <p class="section-subtitle">Инновационные решения для успешного бизнеса</p>
+                    </div>
+                    
+                    <div class="features-grid">
+                        <div class="feature-card glass-card hover-lift">
+                            <div class="feature-icon">
+                                <i class="fas fa-shield-alt"></i>
+                                <div class="icon-glow"></div>
+                                <div class="icon-particles">
+                                    <div class="particle"></div>
+                                    <div class="particle"></div>
+                                    <div class="particle"></div>
+                                </div>
+                            </div>
+                            <h3 class="feature-title">Максимальная безопасность</h3>
+                            <p class="feature-description">Все объявления проходят многоэтапную проверку, а пользователи - верификацию</p>
+                            <div class="feature-decoration"></div>
+                        </div>
+                        
+                        <div class="feature-card glass-card hover-lift">
+                            <div class="feature-icon">
+                                <i class="fas fa-bolt"></i>
+                                <div class="icon-glow"></div>
+                                <div class="icon-particles">
+                                    <div class="particle"></div>
+                                    <div class="particle"></div>
+                                    <div class="particle"></div>
+                                </div>
+                            </div>
+                            <h3 class="feature-title">Мгновенный поиск</h3>
+                            <p class="feature-description">Находите подходящие площадки за несколько минут с помощью умного фильтра</p>
+                            <div class="feature-decoration"></div>
+                        </div>
+                        
+                        <div class="feature-card glass-card hover-lift">
+                            <div class="feature-icon">
+                                <i class="fas fa-handshake"></i>
+                                <div class="icon-glow"></div>
+                                <div class="icon-particles">
+                                    <div class="particle"></div>
+                                    <div class="particle"></div>
+                                    <div class="particle"></div>
+                                </div>
+                            </div>
+                            <h3 class="feature-title">Прямые контакты</h3>
+                            <p class="feature-description">Связывайтесь напрямую с владельцами помещений без посредников</p>
+                            <div class="feature-decoration"></div>
+                        </div>
+                        
+                        <div class="feature-card glass-card hover-lift">
+                            <div class="feature-icon">
+                                <i class="fas fa-chart-line"></i>
+                                <div class="icon-glow"></div>
+                                <div class="icon-particles">
+                                    <div class="particle"></div>
+                                    <div class="particle"></div>
+                                    <div class="particle"></div>
+                                </div>
+                            </div>
+                            <h3 class="feature-title">Детальная аналитика</h3>
+                            <p class="feature-description">Подробная информация и статистика по каждому объекту для принятия решений</p>
+                            <div class="feature-decoration"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция входа -->
+            <section id="login-section" class="section">
+                <div class="auth-container">
+                    <div class="auth-wrapper">
+                        <div class="auth-decoration">
+                            <div class="decoration-item">
+                                <i class="fas fa-lock"></i>
+                                <div class="decoration-glow"></div>
+                            </div>
+                            <div class="decoration-text">
+                                <h3>Безопасный вход</h3>
+                                <p>Ваши данные защищены</p>
+                            </div>
+                            <div class="decoration-line"></div>
+                        </div>
+                        
+                        <div class="auth-card glass-card">
+                            <div class="auth-header">
+                                <h2 class="gradient-text">Вход в систему</h2>
+                                <p>Войдите в свой аккаунт</p>
+                            </div>
+                            
+                            <form id="login-form" class="auth-form">
+                                <div class="form-group floating-label">
+                                    <input type="text" id="username" required>
+                                    <label for="username">Логин</label>
+                                    <div class="form-icon">
+                                        <i class="fas fa-user"></i>
+                                    </div>
+                                    <div class="form-line"></div>
+                                </div>
+                                
+                                <div class="form-group floating-label">
+                                    <input type="password" id="password" required>
+                                    <label for="password">Пароль</label>
+                                    <div class="form-icon">
+                                        <i class="fas fa-key"></i>
+                                    </div>
+                                    <div class="form-line"></div>
+                                    <button type="button" class="password-toggle">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary btn-auth">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    <span>Войти в систему</span>
+                                    <div class="btn-loading">
+                                        <div class="loading-spinner"></div>
+                                    </div>
+                                </button>
+                            </form>
+                            
+                            <div class="test-accounts glass-card">
+                                <h4><i class="fas fa-vial"></i> Тестовые аккаунты:</h4>
+                                <div class="test-account">
+                                    <i class="fas fa-crown"></i>
+                                    <div>
+                                        <strong>Админ:</strong> admin / admin123
+                                    </div>
+                                </div>
+                                <div class="test-account">
+                                    <i class="fas fa-user"></i>
+                                    <div>
+                                        <strong>Пользователь:</strong> ivanov / user123
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="auth-footer">
+                                <p>Нет аккаунта? <a onclick="showSection('register')" class="auth-link">Зарегистрироваться</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция регистрации -->
+            <section id="register-section" class="section">
+                <div class="auth-container">
+                    <div class="auth-wrapper">
+                        <div class="auth-card glass-card">
+                            <div class="auth-header">
+                                <h2 class="gradient-text">Регистрация</h2>
+                                <p>Создайте новый аккаунт</p>
+                            </div>
+                            
+                            <form id="register-form" class="auth-form">
+                                <div class="form-row">
+                                    <div class="form-group floating-label">
+                                        <input type="text" id="reg-username" required minlength="3" maxlength="20">
+                                        <label for="reg-username">Логин *</label>
+                                        <div class="form-icon">
+                                            <i class="fas fa-at"></i>
+                                        </div>
+                                        <div class="form-line"></div>
+                                        <div class="validation-hint">3-20 символов</div>
+                                    </div>
+                                    
+                                    <div class="form-group floating-label">
+                                        <input type="password" id="reg-password" required minlength="8">
+                                        <label for="reg-password">Пароль *</label>
+                                        <div class="form-icon">
+                                            <i class="fas fa-lock"></i>
+                                        </div>
+                                        <div class="form-line"></div>
+                                        <div class="password-strength">
+                                            <div class="strength-bar"></div>
+                                        </div>
+                                        <div class="validation-hint">Минимум 8 символов</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group floating-label">
+                                    <input type="text" id="reg-name" required>
+                                    <label for="reg-name">ФИО *</label>
+                                    <div class="form-icon">
+                                        <i class="fas fa-user-tie"></i>
+                                    </div>
+                                    <div class="form-line"></div>
+                                    <div class="validation-hint">Фамилия Имя Отчество</div>
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group floating-label">
+                                        <input type="email" id="reg-email" required>
+                                        <label for="reg-email">Email *</label>
+                                        <div class="form-icon">
+                                            <i class="fas fa-envelope"></i>
+                                        </div>
+                                        <div class="form-line"></div>
+                                    </div>
+                                    
+                                    <div class="form-group floating-label">
+                                        <input type="tel" id="reg-phone" required>
+                                        <label for="reg-phone">Телефон *</label>
+                                        <div class="form-icon">
+                                            <i class="fas fa-phone"></i>
+                                        </div>
+                                        <div class="form-line"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group floating-label">
+                                    <input type="date" id="reg-birthdate" required max="">
+                                    <label for="reg-birthdate">Дата рождения *</label>
+                                    <div class="form-icon">
+                                        <i class="fas fa-birthday-cake"></i>
+                                    </div>
+                                    <div class="form-line"></div>
+                                    <div class="validation-hint">Минимальный возраст: 16 лет</div>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary btn-auth">
+                                    <i class="fas fa-user-plus"></i>
+                                    <span>Зарегистрироваться</span>
+                                    <div class="btn-loading">
+                                        <div class="loading-spinner"></div>
+                                    </div>
+                                </button>
+                                
+                                <button type="button" class="btn btn-glass btn-auth" onclick="showSection('login')">
+                                    <i class="fas fa-sign-in-alt"></i>
+                                    <span>Войти</span>
+                                </button>
+                            </form>
+                            
+                            <div class="auth-footer">
+                                <p>У вас есть аккаунт? <a onclick="showSection('login')" class="auth-link">Войти</a></p>
+                            </div>
+                        </div>
+                        
+                        <div class="auth-decoration">
+                            <div class="decoration-item">
+                                <i class="fas fa-user-plus"></i>
+                                <div class="decoration-glow"></div>
+                            </div>
+                            <div class="decoration-text">
+                                <h3>Присоединяйтесь к нам</h3>
+                                <p>Более 10,000 успешных сделок</p>
+                            </div>
+                            <div class="features-list">
+                                <div class="feature-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Безопасные сделки</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Техподдержка 24/7</span>
+                                </div>
+                                <div class="feature-item">
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Лучшие цены</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция площадок -->
+            <section id="properties-section" class="section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span class="title-decor">//</span>
+                            <span class="title-shimmer">Доступные торговые площади</span>
+                            <span class="title-decor">//</span>
+                        </h2>
+                        <p id="properties-count-text">Найдено <span id="properties-count" class="accent-text">0</span> объектов</p>
+                    </div>
+                    
+                    <!-- Фильтры -->
+                    <div class="filters-card glass-card">
+                        <div class="filter-grid">
+                            <div class="filter-group">
+                                <div class="filter-icon">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                                <input type="text" id="search-input" placeholder="Поиск по названию..." class="filter-input">
+                            </div>
+                            
+                            <div class="filter-group">
+                                <div class="filter-icon">
+                                    <i class="fas fa-city"></i>
+                                </div>
+                                <select id="city-filter" class="filter-select">
+                                    <option value="">Все города</option>
+                                </select>
+                                <div class="select-arrow">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <div class="filter-icon">
+                                    <i class="fas fa-ruler-combined"></i>
+                                </div>
+                                <select id="area-filter" class="filter-select">
+                                    <option value="">Любая площадь</option>
+                                    <option value="50">До 50 м²</option>
+                                    <option value="100">До 100 м²</option>
+                                    <option value="200">До 200 м²</option>
+                                    <option value="500">До 500 м²</option>
+                                </select>
+                                <div class="select-arrow">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <div class="filter-icon">
+                                    <i class="fas fa-dollar-sign"></i>
+                                </div>
+                                <select id="price-filter" class="filter-select">
+                                    <option value="">Любая цена</option>
+                                    <option value="50">До $50/день</option>
+                                    <option value="100">До $100/день</option>
+                                    <option value="200">До $200/день</option>
+                                    <option value="500">До $500/день</option>
+                                </select>
+                                <div class="select-arrow">
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-glass btn-filter" onclick="resetFilters()">
+                                <i class="fas fa-redo"></i>
+                                <span>Сбросить</span>
                             </button>
                         </div>
-                        <button class="btn-add-listing" id="addListingBtn">
-                            <i class="fas fa-plus"></i> Добавить объявление
-                        </button>
-                    </div>
-
-                    <button class="mobile-menu-btn" id="mobileMenuBtn">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="hero-background">
-            <div class="hero-shape hero-shape-1"></div>
-            <div class="hero-shape hero-shape-2"></div>
-            <div class="hero-shape hero-shape-3"></div>
-        </div>
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-badge animate__animated animate__fadeInDown">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>Беларусь • Работаем по всей стране</span>
-                </div>
-                
-                <h1 class="animate__animated animate__fadeInUp">
-                    Найдите идеальную <span class="highlight">торговую площадь</span> для вашего бизнеса
-                </h1>
-                
-                <p class="hero-subtitle animate__animated animate__fadeInUp animate__delay-1s">
-                    Более 500+ проверенных объектов в 25 городах Беларуси. Подбор, проверка и полное юридическое сопровождение.
-                </p>
-
-                <!-- Поисковая форма -->
-                <div class="search-container animate__animated animate__fadeInUp animate__delay-2s">
-                    <div class="search-tabs">
-                        <button class="search-tab active" data-tab="rent">Аренда</button>
-                        <button class="search-tab" data-tab="buy">Продажа</button>
                     </div>
                     
-                    <div class="search-form">
-                        <div class="search-row">
-                            <div class="search-group">
-                                <i class="fas fa-search"></i>
-                                <input type="text" id="searchInput" placeholder="Район, улица, метро или название ТЦ...">
+                    <!-- Список площадок -->
+                    <div class="property-grid" id="properties-list">
+                        <!-- Динамически заполняется -->
+                    </div>
+                    
+                    <!-- Пагинация -->
+                    <div class="pagination">
+                        <button class="pagination-btn" onclick="prevPage()">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="pagination-pages">
+                            <span class="page-active">1</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span class="page-dots">...</span>
+                            <span>10</span>
+                        </div>
+                        <button class="pagination-btn" onclick="nextPage()">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция городов -->
+            <section id="cities-section" class="section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span class="title-decor">//</span>
+                            <span class="title-shimmer">Города с доступными площадками</span>
+                            <span class="title-decor">//</span>
+                        </h2>
+                        <p>Выберите город для просмотра доступных торговых площадей</p>
+                    </div>
+                    
+                    <div class="cities-grid" id="cities-list">
+                        <!-- Динамически заполняется -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция профиля -->
+            <section id="profile-section" class="section">
+                <div class="container">
+                    <div class="profile-header">
+                        <div class="profile-avatar-container">
+                            <div id="profile-avatar" class="profile-avatar neon-avatar">
+                                <div class="avatar-pulse"></div>
                             </div>
-                            <div class="search-group">
-                                <i class="fas fa-city"></i>
-                                <select id="citySelect">
-                                    <option value="">Все города</option>
-                                    <option value="minsk">Минск</option>
-                                    <option value="gomel">Гомель</option>
-                                    <option value="vitebsk">Витебск</option>
-                                    <option value="grodno">Гродно</option>
-                                    <option value="brest">Брест</option>
-                                    <option value="mogilev">Могилёв</option>
-                                    <option value="borisov">Борисов</option>
-                                    <option value="soligorsk">Солигорск</option>
-                                    <option value="baranovichi">Барановичи</option>
-                                    <option value="pinsk">Пинск</option>
-                                    <option value="orsha">Орша</option>
-                                    <option value="molodechno">Молодечно</option>
-                                    <option value="lida">Лида</option>
-                                    <option value="novopolotsk">Новополоцк</option>
-                                    <option value="bobruysk">Бобруйск</option>
-                                </select>
+                            <div class="profile-avatar-ring"></div>
+                        </div>
+                        <div class="profile-info">
+                            <h2 id="profile-name" class="profile-name"></h2>
+                            <div id="profile-role" class="profile-role"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-stats glass-card">
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <div class="stat-data">
+                                <div id="user-properties-count" class="stat-number">0</div>
+                                <div class="stat-label">Всего площадок</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-data">
+                                <div id="user-pending-count" class="stat-number">0</div>
+                                <div class="stat-label">На модерации</div>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-data">
+                                <div id="user-approved-count" class="stat-number">0</div>
+                                <div class="stat-label">Одобрено</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-details glass-card">
+                        <h3>Контактная информация</h3>
+                        <div class="details-grid">
+                            <div class="detail-item">
+                                <i class="fas fa-envelope"></i>
+                                <div>
+                                    <div class="detail-label">Email</div>
+                                    <div id="profile-email" class="detail-value"></div>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-phone"></i>
+                                <div>
+                                    <div class="detail-label">Телефон</div>
+                                    <div id="profile-phone" class="detail-value"></div>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-birthday-cake"></i>
+                                <div>
+                                    <div class="detail-label">Дата рождения</div>
+                                    <div id="profile-birthdate" class="detail-value"></div>
+                                </div>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <div>
+                                    <div class="detail-label">Дата регистрации</div>
+                                    <div id="profile-date" class="detail-value"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Кнопка редактирования профиля (только для обычных пользователей) -->
+                    <div id="profile-edit-section" style="display: none;">
+                        <div class="form-card glass-card">
+                            <h3>Редактировать профиль</h3>
+                            <form id="edit-profile-form">
+                                <div class="form-row">
+                                    <div class="form-group floating-label">
+                                        <input type="email" id="edit-email" required>
+                                        <label for="edit-email">Email *</label>
+                                        <div class="form-icon">
+                                            <i class="fas fa-envelope"></i>
+                                        </div>
+                                        <div class="form-line"></div>
+                                    </div>
+                                    
+                                    <div class="form-group floating-label">
+                                        <input type="tel" id="edit-phone" required>
+                                        <label for="edit-phone">Телефон *</label>
+                                        <div class="form-icon">
+                                            <i class="fas fa-phone"></i>
+                                        </div>
+                                        <div class="form-line"></div>
+                                    </div>
+                                </div>
+                                
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i>
+                                    Сохранить изменения
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция "Мои площадки" -->
+            <section id="my-properties-section" class="section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span class="title-decor">//</span>
+                            <span class="title-shimmer">Мои торговые площади</span>
+                            <span class="title-decor">//</span>
+                        </h2>
+                        <p>Всего площадок: <span id="my-properties-count" class="accent-text">0</span></p>
+                    </div>
+                    
+                    <div class="property-grid" id="my-properties-list">
+                        <!-- Динамически заполняется -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция добавления площадки -->
+            <section id="add-property-section" class="section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span class="title-decor">//</span>
+                            <span class="title-shimmer">Добавить новую площадку</span>
+                            <span class="title-decor">//</span>
+                        </h2>
+                        <p>Заполните информацию о торговой площади</p>
+                    </div>
+                    
+                    <div class="form-card glass-card">
+                        <form id="add-property-form" class="property-form">
+                            <div class="form-row">
+                                <div class="form-group floating-label">
+                                    <input type="text" id="title" required>
+                                    <label for="title">Название площадки *</label>
+                                    <div class="form-icon">
+                                        <i class="fas fa-heading"></i>
+                                    </div>
+                                    <div class="form-line"></div>
+                                </div>
+                                
+                                <div class="form-group floating-label">
+                                    <select id="property-city" required>
+                                        <option value="">Выберите город</option>
+                                    </select>
+                                    <label for="property-city">Город *</label>
+                                    <div class="form-icon">
+                                        <i class="fas fa-city"></i>
+                                    </div>
+                                    <div class="form-line"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group floating-label">
+                                    <input type="number" id="area" required min="1">
+                                    <label for="area">Площадь (м²) *</label>
+                                    <div class="form-icon">
+                                        <i class="fas fa-ruler-combined"></i>
+                                    </div>
+                                    <div class="form-line"></div>
+                                </div>
+                                
+                                <div class="form-group floating-label">
+                                    <input type="number" id="floor" required min="0">
+                                    <label for="floor">Этаж *</label>
+                                    <div class="form-icon">
+                                        <i class="fas fa-layer-group"></i>
+                                    </div>
+                                    <div class="form-line"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group floating-label">
+                                    <input type="number" id="price" required min="1">
+                                    <label for="price">Цена за день ($) *</label>
+                                    <div class="form-icon">
+                                        <i class="fas fa-dollar-sign"></i>
+                                    </div>
+                                    <div class="form-line"></div>
+                                </div>
+                                
+                                <div class="form-group floating-label">
+                                    <select id="air-conditioning" required>
+                                        <option value="">Кондиционер</option>
+                                        <option value="true">Есть</option>
+                                        <option value="false">Нет</option>
+                                    </select>
+                                    <label for="air-conditioning">Кондиционер *</label>
+                                    <div class="form-icon">
+                                        <i class="fas fa-wind"></i>
+                                    </div>
+                                    <div class="form-line"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group floating-label">
+                                <textarea id="description" required rows="3"></textarea>
+                                <label for="description">Описание площадки *</label>
+                                <div class="form-icon">
+                                    <i class="fas fa-align-left"></i>
+                                </div>
+                                <div class="form-line"></div>
+                            </div>
+                            
+                            <div class="form-group floating-label">
+                                <input type="text" id="address" required>
+                                <label for="address">Адрес *</label>
+                                <div class="form-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div class="form-line"></div>
+                            </div>
+                            
+                            <div class="form-group floating-label">
+                                <input type="url" id="image-url" required>
+                                <label for="image-url">Ссылка на изображение *</label>
+                                <div class="form-icon">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <div class="form-line"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="features-label">Особенности площадки</label>
+                                <div class="features-grid">
+                                    <label class="feature-checkbox">
+                                        <input type="checkbox" name="features" value="security">
+                                        <span class="checkmark"></span>
+                                        <i class="fas fa-shield-alt"></i>
+                                        <span>Система безопасности</span>
+                                    </label>
+                                    <label class="feature-checkbox">
+                                        <input type="checkbox" name="features" value="parking">
+                                        <span class="checkmark"></span>
+                                        <i class="fas fa-parking"></i>
+                                        <span>Парковка</span>
+                                    </label>
+                                    <label class="feature-checkbox">
+                                        <input type="checkbox" name="features" value="internet">
+                                        <span class="checkmark"></span>
+                                        <i class="fas fa-wifi"></i>
+                                        <span>Интернет</span>
+                                    </label>
+                                    <label class="feature-checkbox">
+                                        <input type="checkbox" name="features" value="heating">
+                                        <span class="checkmark"></span>
+                                        <i class="fas fa-temperature-high"></i>
+                                        <span>Отопление</span>
+                                    </label>
+                                    <label class="feature-checkbox">
+                                        <input type="checkbox" name="features" value="storage">
+                                        <span class="checkmark"></span>
+                                        <i class="fas fa-box"></i>
+                                        <span>Складское помещение</span>
+                                    </label>
+                                    <label class="feature-checkbox">
+                                        <input type="checkbox" name="features" value="windows">
+                                        <span class="checkmark"></span>
+                                        <i class="fas fa-window-maximize"></i>
+                                        <span>Витринные окна</span>
+                                    </label>
+                                    <label class="feature-checkbox">
+                                        <input type="checkbox" name="features" value="entrance">
+                                        <span class="checkmark"></span>
+                                        <i class="fas fa-door-open"></i>
+                                        <span>Отдельный вход</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-submit">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>Добавить площадку</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Секция админ-панели -->
+            <section id="admin-panel-section" class="section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span class="title-decor">//</span>
+                            <span class="title-shimmer">Панель администратора</span>
+                            <span class="title-decor">//</span>
+                        </h2>
+                        <p>Управление системой и статистика</p>
+                    </div>
+                    
+                    <div class="admin-stats-grid">
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-store"></i>
+                            </div>
+                            <div class="stat-data">
+                                <div id="total-properties" class="stat-number">0</div>
+                                <div class="stat-label">Всего площадок</div>
                             </div>
                         </div>
                         
-                        <div class="search-row">
-                            <div class="search-group">
-                                <i class="fas fa-building"></i>
-                                <select id="propertyType">
-                                    <option value="">Тип площади</option>
-                                    <option value="store">Магазин</option>
-                                    <option value="mall">Торговый центр</option>
-                                    <option value="kiosk">Киоск/Островок</option>
-                                    <option value="street">Уличная торговля</option>
-                                    <option value="foodcourt">Фуд-корт</option>
-                                    <option value="showroom">Шоу-рум</option>
-                                    <option value="market">Рынок</option>
-                                    <option value="warehouse">Склад+Торговля</option>
-                                </select>
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
                             </div>
-                            <div class="search-group">
-                                <i class="fas fa-ruler-combined"></i>
-                                <select id="areaSelect">
-                                    <option value="">Площадь</option>
-                                    <option value="0-50">до 50 м²</option>
-                                    <option value="50-100">50-100 м²</option>
-                                    <option value="100-200">100-200 м²</option>
-                                    <option value="200-500">200-500 м²</option>
-                                    <option value="500+">от 500 м²</option>
-                                </select>
-                            </div>
-                            <div class="search-group">
-                                <i class="fas fa-money-bill-wave"></i>
-                                <select id="priceSelect">
-                                    <option value="">Бюджет</option>
-                                    <option value="0-1000">до 1 000 BYN</option>
-                                    <option value="1000-3000">1 000 - 3 000 BYN</option>
-                                    <option value="3000-7000">3 000 - 7 000 BYN</option>
-                                    <option value="7000-15000">7 000 - 15 000 BYN</option>
-                                    <option value="15000+">от 15 000 BYN</option>
-                                </select>
+                            <div class="stat-data">
+                                <div id="pending-properties" class="stat-number">0</div>
+                                <div class="stat-label">На модерации</div>
                             </div>
                         </div>
                         
-                        <button class="btn btn-primary btn-search" id="searchBtn">
-                            <i class="fas fa-search"></i> Найти торговую площадь
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Быстрые категории -->
-                <div class="quick-categories animate__animated animate__fadeIn animate__delay-3s">
-                    <div class="category-tags">
-                        <a href="#catalog" class="category-tag" data-type="store">
-                            <i class="fas fa-store"></i>
-                            <span>Магазины</span>
-                        </a>
-                        <a href="#catalog" class="category-tag" data-type="mall">
-                            <i class="fas fa-shopping-cart"></i>
-                            <span>Торговые центры</span>
-                        </a>
-                        <a href="#catalog" class="category-tag" data-type="kiosk">
-                            <i class="fas fa-utensils"></i>
-                            <span>Киоски</span>
-                        </a>
-                        <a href="#catalog" class="category-tag" data-type="foodcourt">
-                            <i class="fas fa-hamburger"></i>
-                            <span>Фуд-корты</span>
-                        </a>
-                        <a href="#catalog" class="category-tag" data-type="street">
-                            <i class="fas fa-umbrella"></i>
-                            <span>Уличная торговля</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Статистика -->
-    <section class="stats-section">
-        <div class="container">
-            <div class="stats-grid">
-                <div class="stat-card animate__animated">
-                    <div class="stat-icon">
-                        <i class="fas fa-building"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="stat-number" data-count="500">0</h3>
-                        <p class="stat-label">Торговых площадей</p>
-                    </div>
-                </div>
-                <div class="stat-card animate__animated">
-                    <div class="stat-icon">
-                        <i class="fas fa-city"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="stat-number" data-count="25">0</h3>
-                        <p class="stat-label">Городов Беларуси</p>
-                    </div>
-                </div>
-                <div class="stat-card animate__animated">
-                    <div class="stat-icon">
-                        <i class="fas fa-handshake"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="stat-number" data-count="1200">0</h3>
-                        <p class="stat-label">Успешных сделок</p>
-                    </div>
-                </div>
-                <div class="stat-card animate__animated">
-                    <div class="stat-icon">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3 class="stat-number" data-count="24">0</h3>
-                        <p class="stat-label">Часа на подбор</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Каталог объектов -->
-    <section class="catalog-section" id="catalog">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Популярные торговые площади</h2>
-                <p class="section-subtitle">Самые востребованные объекты для аренды</p>
-                <div class="section-controls">
-                    <div class="view-toggle">
-                        <button class="view-btn active" data-view="grid">
-                            <i class="fas fa-th-large"></i>
-                        </button>
-                        <button class="view-btn" data-view="list">
-                            <i class="fas fa-list"></i>
-                        </button>
-                    </div>
-                    <select class="sort-select" id="catalogSort">
-                        <option value="newest">Сначала новые</option>
-                        <option value="price_asc">По цене (дешевле)</option>
-                        <option value="price_desc">По цене (дороже)</option>
-                        <option value="area_desc">По площади</option>
-                        <option value="popular">Популярные</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Фильтры -->
-            <div class="catalog-filters">
-                <div class="filter-tags" id="filterTags">
-                    <!-- Фильтры будут добавляться динамически -->
-                </div>
-                <button class="btn-filter" id="advancedFilterBtn">
-                    <i class="fas fa-filter"></i> Все фильтры
-                </button>
-            </div>
-
-            <!-- Сетка объектов -->
-            <div class="properties-grid" id="propertiesGrid">
-                <!-- Объекты будут загружены через JavaScript -->
-            </div>
-
-            <!-- Пагинация -->
-            <div class="pagination" id="pagination">
-                <button class="page-btn prev-btn" disabled>
-                    <i class="fas fa-chevron-left"></i>
-                </button>
-                <div class="page-numbers"></div>
-                <button class="page-btn next-btn">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Города -->
-    <section class="cities-section" id="cities">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Торговые площади по городам</h2>
-                <p class="section-subtitle">Выберите город для поиска подходящей площади</p>
-            </div>
-
-            <div class="cities-grid">
-                <div class="city-card" data-city="minsk">
-                    <div class="city-image">
-                        <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Минск">
-                        <div class="city-overlay">
-                            <h3>Минск</h3>
-                            <p class="city-stats">150+ объектов</p>
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-data">
+                                <div id="total-users" class="stat-number">0</div>
+                                <div class="stat-label">Пользователей</div>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card glass-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-data">
+                                <div id="active-listings" class="stat-number">0</div>
+                                <div class="stat-label">Активных</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="city-info">
-                        <div class="city-features">
-                            <span><i class="fas fa-store"></i> Магазины</span>
-                            <span><i class="fas fa-shopping-cart"></i> ТЦ</span>
-                            <span><i class="fas fa-utensils"></i> Фуд-корты</span>
-                        </div>
-                        <a href="#catalog" class="btn btn-outline btn-sm" data-city="minsk">Смотреть объекты</a>
-                    </div>
                 </div>
+            </section>
 
-                <div class="city-card" data-city="gomel">
-                    <div class="city-image">
-                        <img src="https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Гомель">
-                        <div class="city-overlay">
-                            <h3>Гомель</h3>
-                            <p class="city-stats">85+ объектов</p>
-                        </div>
+            <!-- Секция модерации -->
+            <section id="admin-moderation-section" class="section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span class="title-decor">//</span>
+                            <span class="title-shimmer">Модерация площадок</span>
+                            <span class="title-decor">//</span>
+                        </h2>
+                        <p>Заявок на проверке: <span id="moderation-count" class="accent-text">0</span></p>
                     </div>
-                    <div class="city-info">
-                        <div class="city-features">
-                            <span><i class="fas fa-store"></i> Магазины</span>
-                            <span><i class="fas fa-shopping-cart"></i> ТЦ</span>
-                        </div>
-                        <a href="#catalog" class="btn btn-outline btn-sm" data-city="gomel">Смотреть объекты</a>
-                    </div>
-                </div>
-
-                <div class="city-card" data-city="vitebsk">
-                    <div class="city-image">
-                        <img src="https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Витебск">
-                        <div class="city-overlay">
-                            <h3>Витебск</h3>
-                            <p class="city-stats">75+ объектов</p>
-                        </div>
-                    </div>
-                    <div class="city-info">
-                        <div class="city-features">
-                            <span><i class="fas fa-store"></i> Магазины</span>
-                            <span><i class="fas fa-umbrella"></i> Уличные</span>
-                        </div>
-                        <a href="#catalog" class="btn btn-outline btn-sm" data-city="vitebsk">Смотреть объекты</a>
-                    </div>
-                </div>
-
-                <div class="city-card" data-city="grodno">
-                    <div class="city-image">
-                        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Гродно">
-                        <div class="city-overlay">
-                            <h3>Гродно</h3>
-                            <p class="city-stats">65+ объектов</p>
-                        </div>
-                    </div>
-                    <div class="city-info">
-                        <div class="city-features">
-                            <span><i class="fas fa-store"></i> Магазины</span>
-                            <span><i class="fas fa-utensils"></i> Фуд-корты</span>
-                        </div>
-                        <a href="#catalog" class="btn btn-outline btn-sm" data-city="grodno">Смотреть объекты</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="more-cities">
-                <h3>Другие города Беларуси</h3>
-                <div class="city-list">
-                    <a href="#catalog" class="city-item" data-city="brest">Брест (60+)</a>
-                    <a href="#catalog" class="city-item" data-city="mogilev">Могилёв (55+)</a>
-                    <a href="#catalog" class="city-item" data-city="borisov">Борисов (40+)</a>
-                    <a href="#catalog" class="city-item" data-city="soligorsk">Солигорск (35+)</a>
-                    <a href="#catalog" class="city-item" data-city="baranovichi">Барановичи (30+)</a>
-                    <a href="#catalog" class="city-item" data-city="pinsk">Пинск (25+)</a>
-                    <a href="#catalog" class="city-item" data-city="orsha">Орша (20+)</a>
-                    <a href="#catalog" class="city-item" data-city="molodechno">Молодечно (20+)</a>
-                    <a href="#catalog" class="city-item" data-city="bobruysk">Бобруйск (18+)</a>
-                    <a href="#catalog" class="city-item" data-city="lida">Лида (15+)</a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Услуги -->
-    <section class="services-section" id="services">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">Наши услуги</h2>
-                <p class="section-subtitle">Полный комплекс услуг для вашего бизнеса</p>
-            </div>
-
-            <div class="services-grid">
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-search-location"></i>
-                    </div>
-                    <h3>Подбор помещения</h3>
-                    <p>Профессиональный подбор торговой площади по вашим критериям за 24 часа</p>
-                    <ul>
-                        <li>Анализ локации и трафика</li>
-                        <li>Подбор по бюджету и площади</li>
-                        <li>Организация просмотров</li>
-                    </ul>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-file-contract"></i>
-                    </div>
-                    <h3>Юридическое сопровождение</h3>
-                    <p>Полное юридическое сопровождение сделки от договора до регистрации</p>
-                    <ul>
-                        <li>Составление договора аренды</li>
-                        <li>Проверка документов собственника</li>
-                        <li>Регистрация в госорганах</li>
-                    </ul>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-calculator"></i>
-                    </div>
-                    <h3>Бизнес-консалтинг</h3>
-                    <p>Расчет окупаемости и помощь в запуске торговой точки</p>
-                    <ul>
-                        <li>Расчет доходности и расходов</li>
-                        <li>Анализ конкурентов</li>
-                        <li>Разработка концепции</li>
-                    </ul>
-                </div>
-
-                <div class="service-card">
-                    <div class="service-icon">
-                        <i class="fas fa-hard-hat"></i>
-                    </div>
-                    <h3>Ремонт и дизайн</h3>
-                    <p>Организация ремонтных работ и разработка дизайн-проекта</p>
-                    <ul>
-                        <li>Дизайн-проект помещения</li>
-                        <li>Подбор подрядчиков</li>
-                        <li>Контроль качества работ</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- О нас -->
-    <section class="about-section" id="about">
-        <div class="container">
-            <div class="about-content">
-                <div class="about-text">
-                    <h2 class="section-title">О компании TradeSpace.BY</h2>
-                    <p>Мы специализируемся на аренде и продаже торговых площадей в Беларуси с 2015 года. За 8 лет работы мы помогли открыть более 1200 торговых точек по всей стране.</p>
-                    <p>Наша команда состоит из профессиональных риелторов, юристов и бизнес-консультантов с опытом работы от 5 лет.</p>
                     
-                    <div class="about-features">
-                        <div class="feature">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Работаем по всей Беларуси</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Без комиссии с арендатора</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Юридическая гарантия сделки</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check-circle"></i>
-                            <span>Персональный менеджер</span>
-                        </div>
+                    <div class="property-grid" id="moderation-list">
+                        <!-- Динамически заполняется -->
                     </div>
+                </div>
+            </section>
 
-                    <div class="team-showcase">
-                        <h4>Наша команда</h4>
-                        <div class="team-members">
-                            <div class="team-member">
-                                <img src="https://ui-avatars.com/api/?name=Анна+Иванова&background=4A90E2&color=fff" alt="Анна Иванова">
-                                <span>Анна Иванова</span>
-                                <small>Старший риелтор</small>
+            <!-- Секция управления БД -->
+            <section id="database-management-section" class="section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span class="title-decor">//</span>
+                            <span class="title-shimmer">Управление базой данных</span>
+                            <span class="title-decor">//</span>
+                        </h2>
+                        <p>Просмотр и управление всеми данными системы</p>
+                    </div>
+                    
+                    <div class="database-tabs glass-card">
+                        <div class="tab-buttons">
+                            <button class="tab-button active" onclick="openDatabaseTab('trading-points')">
+                                <i class="fas fa-store"></i> Торговые точки
+                            </button>
+                            <button class="tab-button" onclick="openDatabaseTab('clients')">
+                                <i class="fas fa-users"></i> Клиенты
+                            </button>
+                            <button class="tab-button" onclick="openDatabaseTab('rentals')">
+                                <i class="fas fa-file-contract"></i> Договоры аренды
+                            </button>
+                            <button class="tab-button" onclick="openDatabaseTab('users')">
+                                <i class="fas fa-user-friends"></i> Пользователи
+                            </button>
+                        </div>
+                        
+                        <div class="tab-content">
+                            <div id="trading-points-tab" class="tab-pane active">
+                                <table class="database-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Код</th>
+                                            <th>Название</th>
+                                            <th>Город</th>
+                                            <th>Этаж</th>
+                                            <th>Площадь</th>
+                                            <th>Кондиционер</th>
+                                            <th>Цена за день</th>
+                                            <th>Статус</th>
+                                            <th>Действия</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="trading-points-table">
+                                        <!-- Динамически заполняется -->
+                                    </tbody>
+                                </table>
                             </div>
-                            <div class="team-member">
-                                <img src="https://ui-avatars.com/api/?name=Дмитрий+Петров&background=00C48C&color=fff" alt="Дмитрий Петров">
-                                <span>Дмитрий Петров</span>
-                                <small>Юрист</small>
+                            
+                            <div id="clients-tab" class="tab-pane">
+                                <table class="database-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Код</th>
+                                            <th>Название</th>
+                                            <th>Контактное лицо</th>
+                                            <th>Телефон</th>
+                                            <th>Email</th>
+                                            <th>Статус</th>
+                                            <th>Действия</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="clients-table">
+                                        <!-- Динамически заполняется -->
+                                    </tbody>
+                                </table>
                             </div>
-                            <div class="team-member">
-                                <img src="https://ui-avatars.com/api/?name=Екатерина+Сидорова&background=FF6B6B&color=fff" alt="Екатерина Сидорова">
-                                <span>Екатерина Сидорова</span>
-                                <small>Бизнес-аналитик</small>
+                            
+                            <div id="rentals-tab" class="tab-pane">
+                                <table class="database-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Код</th>
+                                            <th>Номер договора</th>
+                                            <th>Торговая точка</th>
+                                            <th>Клиент</th>
+                                            <th>Дата начала</th>
+                                            <th>Дата окончания</th>
+                                            <th>Статус</th>
+                                            <th>Цена за день</th>
+                                            <th>Действия</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rentals-table">
+                                        <!-- Динамически заполняется -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div id="users-tab" class="tab-pane">
+                                <table class="database-table">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Логин</th>
+                                            <th>ФИО</th>
+                                            <th>Email</th>
+                                            <th>Телефон</th>
+                                            <th>Дата рождения</th>
+                                            <th>Роль</th>
+                                            <th>Дата регистрации</th>
+                                            <th>Действия</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="users-table">
+                                        <!-- Динамически заполняется -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
+            </section>
 
-                <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Наша команда">
+            <!-- Секция "О нас" -->
+            <section id="about-section" class="section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span class="title-decor">//</span>
+                            <span class="title-shimmer">О компании TradeRent</span>
+                            <span class="title-decor">//</span>
+                        </h2>
+                        <p>Лидер в сфере аренды торговых площадей в Беларуси</p>
+                    </div>
+                    
+                    <div class="about-content">
+                        <div class="about-card glass-card">
+                            <h3>Наша миссия</h3>
+                            <p>Мы создаем удобную и безопасную платформу для поиска и аренды торговых площадей, соединяя владельцев коммерческой недвижимости с арендаторами. Наша цель - сделать процесс аренды максимально простым, прозрачным и эффективным.</p>
+                        </div>
+                        
+                        <div class="about-card glass-card">
+                            <h3>Наши ценности</h3>
+                            <ul>
+                                <li><i class="fas fa-check-circle"></i> Прозрачность и честность</li>
+                                <li><i class="fas fa-check-circle"></i> Безопасность сделок</li>
+                                <li><i class="fas fa-check-circle"></i> Профессионализм</li>
+                                <li><i class="fas fa-check-circle"></i> Инновации</li>
+                                <li><i class="fas fa-check-circle"></i> Забота о клиентах</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="about-card glass-card">
+                            <h3>Контакты</h3>
+                            <div class="contact-info">
+                                <p><i class="fas fa-phone"></i> +375 (29) 526-09-95</p>
+                                <p><i class="fas fa-envelope"></i> info@traderent.by</p>
+                                <p><i class="fas fa-map-marker-alt"></i> Минск, пр. Независимости, 58</p>
+                                <p><i class="fas fa-clock"></i> Пн-Пт: 9:00-18:00</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </section>
+            </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
+            <!-- Секция отзывов -->
+            <section id="reviews-received-section" class="section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span class="title-decor">//</span>
+                            <span class="title-shimmer">Мои отзывы</span>
+                            <span class="title-decor">//</span>
+                        </h2>
+                    </div>
+                    
+                    <div class="reviews-tabs">
+                        <button class="tab-button active" onclick="openReviewsTab('received')">
+                            Полученные отзывы
+                        </button>
+                        <button class="tab-button" onclick="openReviewsTab('given')">
+                            Оставленные отзывы
+                        </button>
+                    </div>
+                    
+                    <div class="tab-content">
+                        <div id="received-reviews-tab" class="tab-pane active">
+                            <div id="received-reviews-list" class="reviews-list">
+                                <!-- Динамически заполняется -->
+                            </div>
+                        </div>
+                        
+                        <div id="given-reviews-tab" class="tab-pane">
+                            <div id="given-reviews-list" class="reviews-list">
+                                <!-- Динамически заполняется -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Футер -->
+        <footer class="footer">
             <div class="footer-content">
-                <div class="footer-section">
-                    <div class="logo">
-                        <i class="fas fa-store"></i>
-                        <span>TradeSpace<span class="by">.BY</span></span>
+                <div class="footer-main">
+                    <div class="footer-brand">
+                        <div class="logo">
+                            <i class="fas fa-store logo-icon"></i>
+                            <div class="logo-text">
+                                <span class="logo-main">Trade</span>
+                                <span class="logo-accent">Rent</span>
+                            </div>
+                        </div>
+                        <p class="footer-description">Ведущая платформа по аренде торговых площадей в Беларуси. Инновации для вашего бизнеса.</p>
+                        <div class="social-links">
+                            <a href="#" class="social-link">
+                                <i class="fab fa-telegram"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-viber"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-facebook"></i>
+                            </a>
+                        </div>
                     </div>
-                    <p class="footer-description">
-                        Аренда и продажа торговых площадей по всей Беларуси. Профессиональный подбор с полным юридическим сопровождением.
-                    </p>
-                    <div class="social-links">
-                        <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-viber"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-whatsapp"></i></a>
-                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    
+                    <div class="footer-links">
+                        <div class="footer-column">
+                            <h3 class="footer-title">Навигация</h3>
+                            <a onclick="showSection('properties')" class="footer-link">Все площадки</a>
+                            <a onclick="showSection('cities')" class="footer-link">Города</a>
+                            <a onclick="showSection('about')" class="footer-link">О нас</a>
+                            <a onclick="openSupportModal()" class="footer-link">Поддержка</a>
+                        </div>
+                        
+                        <div class="footer-column">
+                            <h3 class="footer-title">Контакты</h3>
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>+375 (29) 526-09-95</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>info@traderent.by</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Минск, пр. Независимости, 58</span>
+                            </div>
+                        </div>
+                        
+                        <div class="footer-column">
+                            <h3 class="footer-title">Помощь</h3>
+                            <a href="#" class="footer-link">Частые вопросы</a>
+                            <a href="#" class="footer-link">Условия использования</a>
+                            <a href="#" class="footer-link">Политика конфиденциальности</a>
+                            <a href="#" class="footer-link">Партнёрская программа</a>
+                        </div>
                     </div>
                 </div>
-
-                <div class="footer-section">
-                    <h4>Города</h4>
-                    <ul class="footer-links">
-                        <li><a href="#catalog" data-city="minsk">Минск</a></li>
-                        <li><a href="#catalog" data-city="gomel">Гомель</a></li>
-                        <li><a href="#catalog" data-city="vitebsk">Витебск</a></li>
-                        <li><a href="#catalog" data-city="grodno">Гродно</a></li>
-                        <li><a href="#catalog" data-city="brest">Брест</a></li>
-                        <li><a href="#catalog" data-city="mogilev">Могилёв</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-section">
-                    <h4>Услуги</h4>
-                    <ul class="footer-links">
-                        <li><a href="#services">Аренда магазинов</a></li>
-                        <li><a href="#services">Аренда в ТЦ</a></li>
-                        <li><a href="#services">Продажа площадей</a></li>
-                        <li><a href="#services">Юридические услуги</a></li>
-                        <li><a href="#services">Бизнес-консалтинг</a></li>
-                    </ul>
-                </div>
-
-                <div class="footer-section">
-                    <h4>Контакты</h4>
-                    <div class="contact-info">
-                        <div class="contact-item">
-                            <i class="fas fa-phone-alt"></i>
-                            <span>+375 (29) 526-09-95</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-envelope"></i>
-                            <span>info@tradespace.by</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-map-marker-alt"></i>
-                            <span>г. Минск, ул. Торговая, 1</span>
-                        </div>
-                        <div class="contact-item">
-                            <i class="fas fa-clock"></i>
-                            <span>Пн-Пт: 9:00-20:00</span>
-                        </div>
+                
+                <div class="footer-bottom">
+                    <p>&copy; 2025 TradeRent. Все права защищены.</p>
+                    <div class="footer-extra">
+                        <span>Сделано с <i class="fas fa-heart"></i> для бизнеса</span>
                     </div>
                 </div>
             </div>
+        </footer>
+    </div>
 
-            <div class="footer-bottom">
-                <p>&copy; 2024 TradeSpace.BY. Все права защищены.</p>
-                <div class="footer-legal">
-                    <a href="#">Пользовательское соглашение</a>
-                    <a href="#">Политика конфиденциальности</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <!-- Кнопка поддержки -->
+    <div class="support-floating-btn" onclick="openSupportModal()">
+        <i class="fas fa-headset"></i>
+        <div class="support-pulse"></div>
+    </div>
+
+    <!-- Кнопка наверх -->
+    <div class="scroll-top-btn" onclick="scrollToTop()">
+        <i class="fas fa-chevron-up"></i>
+    </div>
 
     <!-- Модальные окна -->
-    <div class="modal-overlay" id="modalOverlay"></div>
-
-    <!-- Модальное окно авторизации -->
-    <div class="modal" id="authModal">
-        <div class="modal-content auth-modal">
-            <button class="modal-close">&times;</button>
-            
-            <div class="auth-tabs">
-                <button class="auth-tab active" data-tab="login">Вход</button>
-                <button class="auth-tab" data-tab="register">Регистрация</button>
+    <div id="property-modal" class="modal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h2>Детали площадки</h2>
+                <span class="close" onclick="closeModal()">&times;</span>
             </div>
-
-            <div class="tab-content active" id="loginTab">
-                <h3>Вход в аккаунт</h3>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="loginEmail">Email</label>
-                        <input type="email" id="loginEmail" placeholder="Ваш email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="loginPassword">Пароль</label>
-                        <div class="password-input">
-                            <input type="password" id="loginPassword" placeholder="Пароль" required>
-                            <button type="button" class="toggle-password">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-options">
-                        <label class="checkbox">
-                            <input type="checkbox" name="remember">
-                            <span>Запомнить меня</span>
-                        </label>
-                        <a href="#" class="forgot-password">Забыли пароль?</a>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">Войти</button>
-                </form>
-
-                <div class="auth-divider">
-                    <span>или войдите через</span>
-                </div>
-
-                <div class="social-auth">
-                    <button class="btn-social google">
-                        <i class="fab fa-google"></i> Google
-                    </button>
-                    <button class="btn-social vk">
-                        <i class="fab fa-vk"></i> ВКонтакте
-                    </button>
-                </div>
-            </div>
-
-            <div class="tab-content" id="registerTab">
-                <h3>Создание аккаунта</h3>
-                <form id="registerForm">
-                    <div class="form-group">
-                        <label for="registerName">Имя и фамилия</label>
-                        <input type="text" id="registerName" placeholder="Иван Иванов" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerEmail">Email</label>
-                        <input type="email" id="registerEmail" placeholder="example@gmail.com" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPhone">Телефон</label>
-                        <input type="tel" id="registerPhone" placeholder="+375 (29) 123-45-67" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerPassword">Пароль</label>
-                        <div class="password-input">
-                            <input type="password" id="registerPassword" placeholder="Не менее 6 символов" required>
-                            <button type="button" class="toggle-password">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="registerConfirm">Подтверждение пароля</label>
-                        <div class="password-input">
-                            <input type="password" id="registerConfirm" placeholder="Повторите пароль" required>
-                            <button type="button" class="toggle-password">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="userType">Я хочу</label>
-                        <select id="userType" required>
-                            <option value="">Выберите тип аккаунта</option>
-                            <option value="tenant">Арендовать помещение</option>
-                            <option value="landlord">Сдать помещение</option>
-                            <option value="both">И то, и другое</option>
-                        </select>
-                    </div>
-                    <label class="checkbox">
-                        <input type="checkbox" required>
-                        <span>Я согласен с <a href="#">условиями использования</a> и <a href="#">политикой конфиденциальности</a></span>
-                    </label>
-                    <button type="submit" class="btn btn-primary btn-block">Зарегистрироваться</button>
-                </form>
+            <div class="modal-body" id="modal-content">
+                <!-- Динамически заполняется -->
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно профиля -->
-    <div class="modal" id="profileModal">
-        <div class="modal-content profile-modal">
-            <button class="modal-close">&times;</button>
-            
-            <div class="profile-header">
-                <div class="profile-avatar">
-                    <img src="https://ui-avatars.com/api/?name=Иван+Иванов&background=4A90E2&color=fff" alt="Аватар">
-                    <button class="edit-avatar">
-                        <i class="fas fa-camera"></i>
-                    </button>
-                </div>
-                <div class="profile-info">
-                    <h3 id="profileName">Иван Иванов</h3>
-                    <p class="profile-email" id="profileEmail">user@example.com</p>
-                    <div class="profile-badge" id="profileType">Арендатор</div>
-                </div>
+    <div id="reject-modal" class="modal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h2>Отклонение площадки</h2>
+                <span class="close" onclick="closeRejectModal()">&times;</span>
             </div>
-
-            <div class="profile-tabs">
-                <button class="profile-tab active" data-tab="profile">Профиль</button>
-                <button class="profile-tab" data-tab="favorites">Избранное</button>
-                <button class="profile-tab" data-tab="listings">Мои объявления</button>
-                <button class="profile-tab" data-tab="settings">Настройки</button>
-                <button class="profile-tab" data-tab="admin" id="adminTab" style="display: none;">Админ-панель</button>
-            </div>
-
-            <div class="profile-content">
-                <!-- Содержимое будет загружено динамически -->
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="reject-reason">Причина отклонения *</label>
+                    <textarea id="reject-reason" rows="4" placeholder="Укажите причину отклонения площадки..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-danger" onclick="submitRejection()">Отклонить</button>
+                    <button class="btn btn-glass" onclick="closeRejectModal()">Отмена</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Модальное окно добавления объявления -->
-    <div class="modal" id="addListingModal">
-        <div class="modal-content listing-modal">
-            <button class="modal-close">&times;</button>
-            <h3>Добавить торговую площадь</h3>
-            
-            <form id="addListingForm">
-                <div class="form-step active" data-step="1">
-                    <h4>Основная информация</h4>
-                    <div class="form-group">
-                        <label for="listingTitle">Название объекта *</label>
-                        <input type="text" id="listingTitle" placeholder="Например: Магазин в центре Минска" required>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="listingType">Тип площади *</label>
-                            <select id="listingType" required>
-                                <option value="">Выберите тип</option>
-                                <option value="store">Магазин</option>
-                                <option value="mall">Торговый центр</option>
-                                <option value="kiosk">Киоск/Островок</option>
-                                <option value="street">Уличная торговля</option>
-                                <option value="foodcourt">Фуд-корт</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="listingCity">Город *</label>
-                            <select id="listingCity" required>
-                                <option value="">Выберите город</option>
-                                <option value="minsk">Минск</option>
-                                <option value="gomel">Гомель</option>
-                                <option value="vitebsk">Витебск</option>
-                                <option value="grodno">Гродно</option>
-                                <option value="brest">Брест</option>
-                                <option value="mogilev">Могилёв</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="listingAddress">Адрес *</label>
-                        <input type="text" id="listingAddress" placeholder="Улица, дом" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="listingDescription">Описание *</label>
-                        <textarea id="listingDescription" rows="3" placeholder="Опишите объект, его преимущества и особенности" required></textarea>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-outline" data-next="2">Далее</button>
-                    </div>
-                </div>
-
-                <div class="form-step" data-step="2">
-                    <h4>Характеристики</h4>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="listingArea">Площадь (м²) *</label>
-                            <input type="number" id="listingArea" placeholder="Например: 85" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="listingPrice">Цена (BYN/мес) *</label>
-                            <input type="number" id="listingPrice" placeholder="Например: 2500" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Особенности</label>
-                        <div class="features-grid">
-                            <label class="checkbox">
-                                <input type="checkbox" name="features" value="aircon">
-                                <span>Кондиционер</span>
-                            </label>
-                            <label class="checkbox">
-                                <input type="checkbox" name="features" value="security">
-                                <span>Охрана</span>
-                            </label>
-                            <label class="checkbox">
-                                <input type="checkbox" name="features" value="parking">
-                                <span>Парковка</span>
-                            </label>
-                            <label class="checkbox">
-                                <input type="checkbox" name="features" value="toilet">
-                                <span>Санузел</span>
-                            </label>
-                            <label class="checkbox">
-                                <input type="checkbox" name="features" value="windows">
-                                <span>Витринные окна</span>
-                            </label>
-                            <label class="checkbox">
-                                <input type="checkbox" name="features" value="warehouse">
-                                <span>Складское помещение</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-outline" data-prev="1">Назад</button>
-                        <button type="button" class="btn btn-primary" data-next="3">Далее</button>
-                    </div>
-                </div>
-
-                <div class="form-step" data-step="3">
-                    <h4>Контактная информация</h4>
-                    <div class="form-group">
-                        <label for="listingContact">Контактное лицо *</label>
-                        <input type="text" id="listingContact" placeholder="Ваше имя" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="listingPhone">Телефон *</label>
-                        <input type="tel" id="listingPhone" placeholder="+375 (__) ___-__-__" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="listingEmail">Email</label>
-                        <input type="email" id="listingEmail" placeholder="Для уведомлений">
-                    </div>
-                    <label class="checkbox">
-                        <input type="checkbox" required>
-                        <span>Подтверждаю, что являюсь собственником или имею право распоряжаться данным объектом</span>
-                    </label>
-                    <div class="form-actions">
-                        <button type="button" class="btn btn-outline" data-prev="2">Назад</button>
-                        <button type="submit" class="btn btn-primary">Добавить объявление</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Модальное окно деталей объекта -->
-    <div class="modal" id="propertyModal">
-        <div class="modal-content property-modal">
-            <button class="modal-close">&times;</button>
-            <div id="propertyDetails"></div>
-        </div>
-    </div>
-
-    <!-- Админ-панель -->
-    <div class="modal" id="adminModal">
-        <div class="modal-content admin-modal">
-            <button class="modal-close">&times;</button>
-            <h3><i class="fas fa-cog"></i> Панель администратора</h3>
-            
-            <div class="admin-tabs">
-                <button class="admin-tab active" data-tab="overview">Обзор</button>
-                <button class="admin-tab" data-tab="properties">Объекты</button>
-                <button class="admin-tab" data-tab="users">Пользователи</button>
-                <button class="admin-tab" data-tab="moderation">Модерация</button>
-                <button class="admin-tab" data-tab="settings">Настройки</button>
+    <div id="support-modal" class="modal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h2>Техническая поддержка</h2>
+                <span class="close" onclick="closeSupportModal()">&times;</span>
             </div>
-
-            <div class="admin-content">
-                <!-- Содержимое будет загружено динамически -->
+            <div class="modal-body">
+                <div class="support-info">
+                    <p><i class="fas fa-phone"></i> <strong>Телефон:</strong> +375 (29) 526-09-95</p>
+                    <p><i class="fas fa-envelope"></i> <strong>Email:</strong> support@traderent.by</p>
+                    <p><i class="fas fa-clock"></i> <strong>Режим работы:</strong> 24/7</p>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="closeSupportModal()">Закрыть</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Уведомления -->
-    <div class="notification-container" id="notificationContainer"></div>
+    <div id="auth-prompt-modal" class="modal">
+        <div class="modal-content glass-card">
+            <div class="modal-header">
+                <h2>Требуется авторизация</h2>
+                <span class="close" onclick="closeAuthPrompt()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Для выполнения этого действия необходимо войти в систему или зарегистрироваться.</p>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="showSection('login'); closeAuthPrompt();">Войти</button>
+                    <button class="btn btn-glass" onclick="showSection('register'); closeAuthPrompt();">Регистрация</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- Scripts -->
     <script src="database.js"></script>
     <script src="app.js"></script>
 </body>
